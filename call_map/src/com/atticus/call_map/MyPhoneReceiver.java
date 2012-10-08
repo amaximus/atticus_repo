@@ -19,10 +19,13 @@ public class MyPhoneReceiver extends BroadcastReceiver {
 			Integer ccCode = GVariables.country_prefix(outNumber);
 
 			String ccCountry = GVariables.cc.getcountry(ccCode);
-			if (ccCountry != null ) {
-				// Log.w("DEBUG", " > " + ccCountry);
+			
+			if ( ! GVariables.onlyInternational || ( ccCountry != GVariables.cc.getcountry(GVariables.ownCountryISO))) {
+				if (ccCountry != null ) {
+					// Log.w("DEBUG", " > " + ccCountry);
 
-				GVariables.DisplayToast(context,ccCode,ccCountry);
+					GVariables.DisplayToast(context,ccCode,ccCountry);
+				}
 				
 			} // if
 		} // if

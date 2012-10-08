@@ -180,11 +180,11 @@ public class CallMap extends Activity {
             			cCountry = GVariables.cc.getcountry(cCountryCode);
             		} else { cCountry = GVariables.cc.getcountry(GVariables.ownCountryISO); }
                 
-                    Log.v("Ringing","onlyInternational: " + Boolean.toString(GVariables.onlyInternational));
+                    // Log.v("Ringing","onlyInternational: " + Boolean.toString(GVariables.onlyInternational));
 
             		if ( ! GVariables.onlyInternational || ( cCountry != GVariables.cc.getcountry(GVariables.ownCountryISO))) {
             			if ( cCountry != null ) {
-            				Log.v("PhoneStateListener"," < " + cCountry);
+            				//Log.v("PhoneStateListener"," < " + cCountry);
             				GVariables.DisplayToast(getApplicationContext(), cCountryCode, cCountry);
             			}
             		}   // if

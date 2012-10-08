@@ -181,7 +181,7 @@ public class GVariables {
         		        // Log.v("CallMap country","Canada");
         			} else {
         				res = context.getResources().getIdentifier("drawable/usa","drawable",context.getPackageName());
-        				//cCountry = "United States of America";
+        				GVariables.cCountry = "United States of America";
         			}
         		}
         }
