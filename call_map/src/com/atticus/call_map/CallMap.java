@@ -3,7 +3,7 @@ package com.atticus.call_map;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -97,7 +97,7 @@ public class CallMap extends Activity {
 	    	   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 	    		   	  if (buttonView.isChecked()) { GVariables.onlyInternational = true; }
 	    		   	  else { GVariables.onlyInternational = false; }
-	   	    		  Log.v("CheckBox",Boolean.toString(GVariables.onlyInternational));
+	   	    		  //Log.v("CheckBox",Boolean.toString(GVariables.onlyInternational));
 
 	    	   }
 	       });
@@ -163,7 +163,7 @@ public class CallMap extends Activity {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
         	
-        	Log.v("PhoneStateListener"," state: " + Integer.toString(state));
+        	// Log.v("PhoneStateListener"," state: " + Integer.toString(state));
         	
             switch (state) {
             
