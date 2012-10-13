@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.atticus.call_map"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    package="com.atticus.CallMap"
+    android:versionCode="2"
+    android:versionName="1.0.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
