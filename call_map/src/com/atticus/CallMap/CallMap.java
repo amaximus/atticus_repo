@@ -11,7 +11,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-// import android.widget.Toast;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.app.Activity;
@@ -70,8 +70,14 @@ public class CallMap extends Activity {
    	    	   @Override
    	    	   public void onFocusChange(View v,boolean hasFocus){
    	    		   	   String s = et1.getText().toString();
-   	    		   	   if ( s != null ) { GVariables.toast_sec = Integer.parseInt(s); }
-   	    		   	   else { GVariables.toast_sec = def_toast_sec; }
+   	    		   	   if ( s != null && s.length() != 0 ) { GVariables.toast_sec = Integer.parseInt(s); }
+   	    		   	   else {
+   	    		   		   // GVariables.toast_sec = def_toast_sec;
+   	    		   		   Toast.makeText(GVariables.appcontext,"Empty field reset to previous value",Toast.LENGTH_SHORT).show();
+   	    		   		   et1.setText(Integer.toString(GVariables.toast_sec));
+   	    		   	   }
+   	    		   	   //Log.v("CallMapSetting_position","|" + Integer.toString(GVariables.toast_sec) + "|");
+
    	    	   }  // onFocusCange
    	       });
    	       
@@ -83,8 +89,12 @@ public class CallMap extends Activity {
    	    	   @Override
    	    	   public void onFocusChange(View v,boolean hasFocus){
    	    		   	   String s = et2.getText().toString();
-   	    		   	   if ( s != null ) { GVariables.toast_position = Integer.parseInt(s); }
-   	    		   	   else { GVariables.toast_position = def_toast_position; }
+   	    		   	   if ( s != null && s.length() != 0 ) { GVariables.toast_position = Integer.parseInt(s); }
+   	    		   	   else { 
+   	    		   		   //GVariables.toast_position = def_toast_position;
+   	    		   		   Toast.makeText(GVariables.appcontext,"Empty field reset to previous value",Toast.LENGTH_SHORT).show();
+   	    		   		   et2.setText(Integer.toString(GVariables.toast_position));
+   	    		   	   }
    	    		   // Log.v("CallMapSetting_position",Integer.toString(GVariables.toast_position));
 
    	    	   }  // onFocus
