@@ -23,10 +23,10 @@ public class CallMap extends Activity {
 	private Integer cCountryCode = 0;	// call's country prefix
 	private static String cCountry ="";		// call's country name
 	
-	private Integer def_toast_position = 75;
-	private Integer def_toast_sec = 8;
+	//private Integer def_toast_position = 75;
+	//private Integer def_toast_sec = 8;
 	//private Boolean def_app_enabled = false;
-	private Boolean def_only_international = false;
+	//private Boolean def_only_international = false;
 
 	private Integer WHITE = 0xFFFFFFFF;
 	private Integer GREY  = 0xFF736F6E;
@@ -51,9 +51,9 @@ public class CallMap extends Activity {
            GVariables.appcontext = getApplicationContext();
            SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
            GVariables.app_enabled = CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
-           GVariables.toast_sec = CallMapSettings.getInt("toast_sec", def_toast_sec);
-           GVariables.toast_position = CallMapSettings.getInt("toast_position", def_toast_position);
-           GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", def_only_international);
+           GVariables.toast_sec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
+           GVariables.toast_position = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
+           GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
 
            // Needed to work after reboot 
            if ( GVariables.app_enabled ) {
@@ -170,6 +170,8 @@ public class CallMap extends Activity {
 	    editor.putInt("toast_sec", GVariables.toast_sec);
 	    editor.putInt("toast_position", GVariables.toast_position);
 	    editor.putBoolean("only_international", GVariables.onlyInternational);
+	    editor.putString("own_ISO", GVariables.ownCountryISO);
+
 
 	    // Commit the edits!
 	    editor.commit();
@@ -201,7 +203,7 @@ public class CallMap extends Activity {
             		if ( ! GVariables.onlyInternational || ( cCountry != GVariables.cc.getcountry(GVariables.ownCountryISO))) {
             			if ( cCountry != null ) {
             				//Log.v("PhoneStateListener"," < " + cCountry);
-            				GVariables.DisplayToast(getApplicationContext(), cCountryCode, cCountry);
+            				GVariables.DisplayToast(getApplicationContext(), cCountryCode, cCountry,GVariables.toast_position, GVariables.toast_sec);
             			}
             		}   // if
             	}  // if enabled

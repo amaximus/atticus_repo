@@ -25,6 +25,9 @@ public class GVariables {
 	public static Boolean onlyInternational;
 	public static String cCountry = "";
 	public static Boolean def_app_enabled = false;
+	public static Boolean def_only_international = false;
+	public static Integer def_toast_position = 35;
+	public static Integer def_toast_sec = 8;
 	
 	public static Integer country_prefix(String s) {
 
@@ -134,7 +137,7 @@ public class GVariables {
 	 * countryc = international call code
 	 * countryn = country name to display
 	 */
-    public static void DisplayToast(final Context context, Integer countryc, String countryn) {
+    public static void DisplayToast(final Context context, Integer countryc, String countryn, Integer tposition,final Integer tsec) {
     	
     	Integer ToastDelay = 2500;	// delay for toast show
     	
@@ -151,7 +154,7 @@ public class GVariables {
     	text.setText(countryn);
 
     	toast = new Toast(context);
-    	toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, toast_position);
+    	toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, tposition);
     	toast.setView(layout);
     	
     	// Toast.makeText(context, Boolean.toString(callState),Toast.LENGTH_SHORT).show();
@@ -160,7 +163,7 @@ public class GVariables {
     	handler.postDelayed(new Runnable() {    		
     	  @Override
     	  public void run() {
-    		 new CountDownTimer(toast_sec*1000, 1000) {
+    		 new CountDownTimer(tsec*1000, 1000) {
           	    	public void onTick(long millisUntilFinished) { 
           	    		// Toast.makeText(context, Boolean.toString(callState),Toast.LENGTH_SHORT).show();
           	    		if ( toast != null ) { toast.show(); } }
