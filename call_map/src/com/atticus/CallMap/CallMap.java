@@ -16,12 +16,13 @@ import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 public class CallMap extends Activity {
 	
-	private Integer cCountryCode = 0;	// call's country prefix
-	private static String cCountry ="";		// call's country name
+	//// private Integer cCountryCode = 0;	// call's country prefix
+	//// private static String cCountry ="";		// call's country name
 	
 	//private Integer def_toast_position = 75;
 	//private Integer def_toast_sec = 8;
@@ -30,23 +31,18 @@ public class CallMap extends Activity {
 
 	private Integer WHITE = 0xFFFFFFFF;
 	private Integer GREY  = 0xFF736F6E;
+	
+	static private Context appcontext;
 		    
 	@Override 
     public void onCreate(Bundle savedInstanceState) {
 		   super.onCreate(savedInstanceState);
 	       setContentView(R.layout.activity_main);
 	       
-	       //register with the telephony mgr to make sure we can read call state
-           final TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 
-           assert(tm != null); 
-           
-           GVariables.ownCountryISO = tm.getSimCountryIso().toUpperCase();
            GVariables.canada = false;
+           appcontext = this;
            
            // Log.v(getClass().getSimpleName(),"own ISOmcc: " + ownCountryISO);
-      
-           GVariables.cc = new Country_Code();
-           GVariables.cc.put(0,GVariables.cc.getcountry(GVariables.ownCountryISO));	// non-international calls
            
            GVariables.appcontext = getApplicationContext();
            SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
@@ -54,14 +50,7 @@ public class CallMap extends Activity {
            GVariables.toast_sec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
            GVariables.toast_position = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
            GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
-
-           // Needed to work after reboot 
-           if ( GVariables.app_enabled ) {
-        	   tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        	   
-        	   // start the service for outgoing calls
-           }
-           
+                      
            final EditText et1 = (EditText) findViewById(R.id.edtimeout);
            et1.setText(Integer.toString(GVariables.toast_sec));
            et1.setFocusableInTouchMode(GVariables.app_enabled);
@@ -118,6 +107,9 @@ public class CallMap extends Activity {
 	    	   }
 	       });
 
+	       appcontext = getApplicationContext();
+	       final Intent service = new Intent(appcontext, CallMapService.class);
+
   	       ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton1);
   	       tb.setChecked(GVariables.app_enabled);
    	       tb.setOnClickListener(new OnClickListener() {
@@ -126,7 +118,9 @@ public class CallMap extends Activity {
    	    		   if ( GVariables.app_enabled ) {
    	    			   GVariables.app_enabled = false;
    	    			   
-   	    	           tm.listen(null, PhoneStateListener.LISTEN_CALL_STATE);
+   	    			   appcontext.stopService(service);
+
+   	    	           // tm.listen(null, PhoneStateListener.LISTEN_CALL_STATE);
    	    			   
    	    			   //Log.v(getClass().getSimpleName(),"OFF");
    	    			   
@@ -138,8 +132,10 @@ public class CallMap extends Activity {
    	    			   tv8.setTextColor(GREY);
    	    		   } else {
    	    			   GVariables.app_enabled = true;
+   	    			   
+   	    			   appcontext.startService(service);
 
-   	    	           tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+   	    	           // tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
    	    	           
    	    			   //Log.v(getClass().getSimpleName(),"ON");
    	    	           
@@ -176,43 +172,7 @@ public class CallMap extends Activity {
 	    // Commit the edits!
 	    editor.commit();
 	}
-  
-    private final PhoneStateListener phoneStateListener = new PhoneStateListener() {
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-        	
-        	// Log.v("PhoneStateListener"," state: " + Integer.toString(state));
-        	
-            switch (state) {
-            
-            case TelephonyManager.CALL_STATE_IDLE:
-            		if ( GVariables.toast != null ) { GVariables.toast.cancel(); GVariables.toast = null; }
-            		break;
-            case TelephonyManager.CALL_STATE_RINGING:
-            	
-            	if ( GVariables.app_enabled ) {
-            		cCountry = null;
-            		cCountryCode = GVariables.country_prefix(incomingNumber);
-            	            	
-            		if ( cCountryCode != 0 ) {	// international incoming call
-            			cCountry = GVariables.cc.getcountry(cCountryCode);
-            		} else { cCountry = GVariables.cc.getcountry(GVariables.ownCountryISO); }
-                
-                    // Log.v("Ringing","onlyInternational: " + Boolean.toString(GVariables.onlyInternational));
-
-            		if ( ! GVariables.onlyInternational || ( cCountry != GVariables.cc.getcountry(GVariables.ownCountryISO))) {
-            			if ( cCountry != null ) {
-            				//Log.v("PhoneStateListener"," < " + cCountry);
-            				GVariables.DisplayToast(getApplicationContext(), cCountryCode, cCountry,GVariables.toast_position, GVariables.toast_sec);
-            			}
-            		}   // if
-            	}  // if enabled
-            	break;
-            }  // switch
-
-        }	// onCallStateChanged
-    };  // PhoneStateListener
-    
+	
     public Boolean getOptEnabled() {
     	SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
         return CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);

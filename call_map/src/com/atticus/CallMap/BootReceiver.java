@@ -8,9 +8,13 @@ public class BootReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-	  
+
 	CallMap cmap = new CallMap();
-	// Boolean enabled = cmap.getEnabled();
+	if ( cmap.getOptEnabled() ) {
+		// start the service
+		Intent service = new Intent(context, CallMapService.class);
+	    context.startService(service);
+	}
     
 	// if ( enabled ) {
     // } // if

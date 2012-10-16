@@ -145,8 +145,6 @@ public class GVariables {
     	View layout = inflater.inflate(R.layout.toast_layout, null);
     	
     	ImageView image = (ImageView) layout.findViewById(R.id.image);
-		//image.setMaxHeight(40);
-		// image.setMaxWidth(40);
     	image.setImageResource(getImageId(context, countryc));
 
     	TextView text = (TextView) layout.findViewById(R.id.text);
@@ -156,9 +154,7 @@ public class GVariables {
     	toast = new Toast(context);
     	toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, tposition);
     	toast.setView(layout);
-    	
-    	// Toast.makeText(context, Boolean.toString(callState),Toast.LENGTH_SHORT).show();
-    	
+    	    	
     	final Handler handler = new Handler();	// wait 2000ms
     	handler.postDelayed(new Runnable() {    		
     	  @Override
