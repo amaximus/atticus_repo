@@ -20,14 +20,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 public class CallMap extends Activity {
-	
-	//// private Integer cCountryCode = 0;	// call's country prefix
-	//// private static String cCountry ="";		// call's country name
-	
-	//private Integer def_toast_position = 75;
-	//private Integer def_toast_sec = 8;
-	//private Boolean def_app_enabled = false;
-	//private Boolean def_only_international = false;
 
 	private Integer WHITE = 0xFFFFFFFF;
 	private Integer GREY  = 0xFF736F6E;
@@ -59,10 +51,15 @@ public class CallMap extends Activity {
    	    	   @Override
    	    	   public void onFocusChange(View v,boolean hasFocus){
    	    		   	   String s = et1.getText().toString();
-   	    		   	   if ( s != null && s.length() != 0 ) { GVariables.toast_sec = Integer.parseInt(s); }
-   	    		   	   else {
+   	    		   	   if ( s != null && s.length() != 0 ) { 
+   	    		   		   if ( s.length() < 4 ) { GVariables.toast_sec = Integer.parseInt(s); }
+   	    		   		   else { 
+   	    		   			   Toast.makeText(GVariables.appcontext,"Number too large; reset to previous value",Toast.LENGTH_SHORT).show();
+    	    		   		   et1.setText(Integer.toString(GVariables.toast_sec));
+   	    		   		   }
+   	    		   	   } else {
    	    		   		   // GVariables.toast_sec = def_toast_sec;
-   	    		   		   Toast.makeText(GVariables.appcontext,"Empty field reset to previous value",Toast.LENGTH_SHORT).show();
+   	    		   		   Toast.makeText(GVariables.appcontext,"Empty field; reset to previous value",Toast.LENGTH_SHORT).show();
    	    		   		   et1.setText(Integer.toString(GVariables.toast_sec));
    	    		   	   }
    	    		   	   //Log.v("CallMapSetting_position","|" + Integer.toString(GVariables.toast_sec) + "|");
@@ -78,8 +75,13 @@ public class CallMap extends Activity {
    	    	   @Override
    	    	   public void onFocusChange(View v,boolean hasFocus){
    	    		   	   String s = et2.getText().toString();
-   	    		   	   if ( s != null && s.length() != 0 ) { GVariables.toast_position = Integer.parseInt(s); }
-   	    		   	   else { 
+   	    		   	   if ( s != null && s.length() != 0 ) { 
+   	    		   		   if ( s.length() < 4 ) { GVariables.toast_position = Integer.parseInt(s); }
+   	    		   		   else {
+   	    		   			   Toast.makeText(GVariables.appcontext,"Number too large; reset to previous value",Toast.LENGTH_SHORT).show();
+   	    		   			   et1.setText(Integer.toString(GVariables.toast_sec));
+   	    		   		   }
+   	    		   	   } else { 
    	    		   		   //GVariables.toast_position = def_toast_position;
    	    		   		   Toast.makeText(GVariables.appcontext,"Empty field reset to previous value",Toast.LENGTH_SHORT).show();
    	    		   		   et2.setText(Integer.toString(GVariables.toast_position));
