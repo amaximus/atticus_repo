@@ -24,7 +24,6 @@ public class GVariables {
 	public static Boolean canada;
 	public static String  ownCountryISO;		// own country ISO mcc code
 	public static Boolean onlyInternational;
-	// public static String cCountry = "";
 	public static Boolean def_app_enabled = false;
 	public static Boolean def_only_international = false;
 	public static Integer def_toast_position = 35;
@@ -107,7 +106,7 @@ public class GVariables {
     	
     	if ( resourceID != 0 ) { image.setImageResource(resourceID); } */
     	
-    	image.setImageResource(context.getResources().getIdentifier("image" + countryISO, "drawable",context.getPackageName()));
+    	image.setImageResource(context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName()));
 
     	Log.v("Ringing","DisplayToast: " + context.getPackageName());
     	//Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
