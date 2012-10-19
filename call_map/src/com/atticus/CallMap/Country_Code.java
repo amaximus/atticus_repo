@@ -193,7 +193,7 @@ public class Country_Code {
 				"USNE","Nebraska","USNV","Nevada","USNH","New Hampshire","USNJ","New Jersey","USNM","New Mexico",
 				"USNY","New York","USNC","North Carolina","USND","North Dakota","USOH","Ohio","USOK","Oklahoma",
 				"USOR","Oregon","USPA","Pennsylvania","USRI","Rhode Island","USSC","South Carolina",
-				"USSD","South Dakota","USTN","Tennessee","USTX","Texas,","USUT","Utah","USVT","Vermont",
+				"USSD","South Dakota","USTN","Tennessee","USTX","Texas","USUT","Utah","USVT","Vermont",
 				"USVA","Virginia","USWA","Washington","USWV","West Virgina","USWI","Wisconsin","USWY","Wyoming",
 				// C A N A D A
 				"CAAB","Alberta","CABC","British Columbia","CAMB","Manitoba","CANB","New Brunswick",

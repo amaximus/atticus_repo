@@ -94,7 +94,7 @@ public class CallMapService extends Service {
 
             				String txtMsg = cCountry;
             				String countryISO = cc.getISOmcc(cCountryCode);
-            				Log.v("PhoneStateListener"," < " + countryISO);
+            				// Log.v("PhoneStateListener"," < " + countryISO);
 
             				if ( countryISO != null && countryISO.length() != 0) {
 

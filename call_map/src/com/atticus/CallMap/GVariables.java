@@ -108,7 +108,7 @@ public class GVariables {
     	
     	image.setImageResource(context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName()));
 
-    	Log.v("Ringing","DisplayToast: " + context.getPackageName());
+    	//Log.v("Ringing","DisplayToast: " + context.getPackageName());
     	//Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
     	
     	TextView text = (TextView) layout.findViewById(R.id.text);
