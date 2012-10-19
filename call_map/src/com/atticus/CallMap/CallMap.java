@@ -175,8 +175,8 @@ public class CallMap extends Activity {
 	    editor.commit();
 	}
 	
-    public Boolean getOptEnabled() {
-    	SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+    public Boolean getOptEnabled(Context context) {
+    	SharedPreferences CallMapSettings = context.getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
         return CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
     	
     }

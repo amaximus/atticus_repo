@@ -38,15 +38,20 @@ public class MyPhoneReceiver extends BroadcastReceiver {
 				
 				GVariables.cc = new Country_Code();
 
+				String ccCountryISO = GVariables.cc.getISOmcc(ccCode);
 				String ccCountry = GVariables.cc.getcountry(ccCode);
 				
 				if ( ccCountry != null && ccCountry.length() != 0 ) {
 			
-					if ( ! GVariables.onlyInternational || ( ccCountry != GVariables.cc.getcountry(ownISO))) {
-						if (ccCountry != null ) {
+					if ( ! GVariables.onlyInternational || ( ccCountryISO != ownISO)) {
+							
+							String ccLocalTime = GVariables.cc.getLocalTime(ccCountryISO, ownISO);
+							String txtMsg = ccCountry;
+							
+							if ( ccLocalTime != "" ) { txtMsg = txtMsg + "\n" + ccLocalTime; }
+							
 							// Log.w("DEBUG", " > " + ccCountry);
-							GVariables.DisplayToast(context,ccCode,ccCountry,tposition,tsec);
-						}
+							GVariables.DisplayToast(context,ccCountryISO,txtMsg,tposition,tsec);
 					} // if
 				}
 			} // if

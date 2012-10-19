@@ -3,6 +3,7 @@ package com.atticus.CallMap;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,7 @@ public class GVariables {
 	public static Boolean canada;
 	public static String  ownCountryISO;		// own country ISO mcc code
 	public static Boolean onlyInternational;
-	public static String cCountry = "";
+	// public static String cCountry = "";
 	public static Boolean def_app_enabled = false;
 	public static Boolean def_only_international = false;
 	public static Integer def_toast_position = 35;
@@ -92,6 +93,7 @@ public class GVariables {
 					case 902:	// Nova Scotia, Prince Edward Island
 						//canada = true;
 						break;
+					// USA
 				}
 				prefix = 1000 + NANP;
 			} else if ( s.substring(0,1).equals("7") ) {	// Russia, Kazahstan
@@ -132,12 +134,12 @@ public class GVariables {
 		
 		return prefix;
 	}
-	
-	/*
+    
+    /*
 	 * countryc = international call code
 	 * countryn = country name to display
 	 */
-    public static void DisplayToast(final Context context, Integer countryc, String countryn, Integer tposition,final Integer tsec) {
+    public static void DisplayToast(final Context context, String countryISO, String countryn, Integer tposition,final Integer tsec) {
     	
     	Integer ToastDelay = 2500;	// delay for toast show
     	
@@ -145,11 +147,18 @@ public class GVariables {
     	View layout = inflater.inflate(R.layout.toast_layout, null);
     	
     	ImageView image = (ImageView) layout.findViewById(R.id.image);
-    	image.setImageResource(getImageId(context, countryc));
+    	Integer resourceID = getImageId(context, countryISO);
+    	if ( resourceID != 0 ) { image.setImageResource(resourceID); }
 
+    	Log.v("Ringing","DisplayToast: " + countryISO);
+    	Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
+    	
     	TextView text = (TextView) layout.findViewById(R.id.text);
-    	if ( cCountry != "" ) { countryn = cCountry; }
-    	text.setText(countryn);
+    	// if ( cCountry != "" ) { countryn = cCountry; }
+    	    	
+    	if ( countryn != null && countryn.length() != 0 ) {
+    			text.setText(countryn);
+    	}
 
     	toast = new Toast(context);
     	toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, tposition);
@@ -168,23 +177,8 @@ public class GVariables {
     	  }   // run
     	}, ToastDelay);  // Handler
     }
-    
-    public static Integer getImageId(Context context, Integer imageNr) {
-        Integer res = context.getResources().getIdentifier("drawable/image" + Integer.toString(imageNr), "drawable",context.getPackageName());
-        // Log.v("getImageID",Integer.toString(imageNr) + "=> resourceID: " + Integer.toString(res));
 
-        if ( res == 0) {				// no valid resource found
-        		if ( imageNr > 1000 ) {	// North American Country Plan
-        			if ( GVariables.canada ) {
-        				res = context.getResources().getIdentifier("drawable/canada","drawable",context.getPackageName());
-        				GVariables.cCountry = "Canada";
-        		        // Log.v("CallMap country","Canada");
-        			} else {
-        				res = context.getResources().getIdentifier("drawable/usa","drawable",context.getPackageName());
-        				GVariables.cCountry = "United States of America";
-        			}
-        		}
-        }
-        return res;
+    public static Integer getImageId(Context context, String imgISO) {
+        return context.getResources().getIdentifier("drawable/image" + imgISO, "drawable",context.getPackageName());
     }
 }
