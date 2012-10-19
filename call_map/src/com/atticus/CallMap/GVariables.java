@@ -51,51 +51,7 @@ public class GVariables {
 
 		if ( international ) {			
 			if (s.substring(0,1).equals("1") ) {	// North America Numbering Plan
-				Integer NANP = Integer.parseInt(s.substring(1,4));
-				switch ( NANP ) { // check for Canada
-					case 403:	// Alberta
-					case 587:
-					case 780:
-					case 825:
-					case 236:	// British Columbia
-					case 250:
-					case 604:
-					case 672:
-					case 778:
-					case 204:	// Manitoba
-					case 431:
-					case 506:	// New Brunswick
-					case 226:	// Ontario
-					case 249:
-					case 289:
-					case 343:
-					case 365:
-					case 416:
-					case 437:
-					case 519:
-					case 613:
-					case 647:
-					case 705:
-					case 807:
-					case 905:
-					case 418:	// Quebec
-					case 438:
-					case 450:
-					case 514:
-					case 579:
-					case 581:
-					case 819:
-					case 873:
-					case 306:	// Saskatchewan
-					case 639:
-					case 709:	// Newfoundland and Labrador
-					case 867:	// Yukon, Nunavut, NW Territories
-					case 902:	// Nova Scotia, Prince Edward Island
-						//canada = true;
-						break;
-					// USA
-				}
-				prefix = 1000 + NANP;
+				prefix = 1000 + Integer.parseInt(s.substring(1,4));
 			} else if ( s.substring(0,1).equals("7") ) {	// Russia, Kazahstan
 				prefix=7;
 			} else {
@@ -147,11 +103,14 @@ public class GVariables {
     	View layout = inflater.inflate(R.layout.toast_layout, null);
     	
     	ImageView image = (ImageView) layout.findViewById(R.id.image);
-    	Integer resourceID = getImageId(context, countryISO);
-    	if ( resourceID != 0 ) { image.setImageResource(resourceID); }
+    	/* Integer resourceID = context.getResources().getIdentifier("drawable/imageHU.png", null,"com.atticus.call_map");
+    	
+    	if ( resourceID != 0 ) { image.setImageResource(resourceID); } */
+    	
+    	image.setImageResource(context.getResources().getIdentifier("image" + countryISO, "drawable",context.getPackageName()));
 
-    	Log.v("Ringing","DisplayToast: " + countryISO);
-    	Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
+    	Log.v("Ringing","DisplayToast: " + context.getPackageName());
+    	//Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
     	
     	TextView text = (TextView) layout.findViewById(R.id.text);
     	// if ( cCountry != "" ) { countryn = cCountry; }
@@ -176,9 +135,5 @@ public class GVariables {
           	 }.start();
     	  }   // run
     	}, ToastDelay);  // Handler
-    }
-
-    public static Integer getImageId(Context context, String imgISO) {
-        return context.getResources().getIdentifier("drawable/image" + imgISO, "drawable",context.getPackageName());
     }
 }
