@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import android.text.format.Time;
-import android.util.Log;
+// import android.util.Log;
 import android.util.SparseArray;
 
 public class Country_Code {
@@ -185,7 +185,7 @@ public class Country_Code {
 				"YE","Yemen",
 				"ZM","Zambia","ZW","Zimbabwe",
 				// U S A
-				"USAL","Alabama","USAK","Alaska","USAZ","Arizona,","USAR","Arkansas","USCA","California","USCO","Colorado",
+				"USAL","Alabama","USAK","Alaska","USAZ","Arizona","USAR","Arkansas","USCA","California","USCO","Colorado",
 				"USCT","Connecticut","USDE","Delaware","USDC","Washington DC.","USFL","Florida","USGA","Georgia",
 				"USHI","Hawaii","USID","Idaho","USIL","Illinois","USIN","Indiana","USIA","Iowa","USKS","Kansas",
 				"USKY","Kentucky","USLA","Louisiana","USME","Maine","USMD","Maryland","USMA","Massachusetts",
@@ -262,7 +262,19 @@ public class Country_Code {
 				"VU","11:00","VA","1:00","VE","-4:30","VN","7:00",
 				"WF","12:00",
 				"YE","3:00",
-				"ZM","2:00","ZW","2:00"};
+				"ZM","2:00","ZW","2:00",
+				// U S A
+				"USAL","-6:00","USAK","-9:00","USAZ","-7:00,","USAR","-6:00","USCA","-8:00","USCO","-7:00","USCT","-5:00",
+				"USDE","-5:00","USDC","-5:00","USFL","-5:00","USGA","-5:00","USHI","-10:00","USID","-7:00","USIL","-6:00",
+				"USIN","-5:00","USIA","-6:00","USKS","-6:00","USKY","-5:00","USLA","-6:00","USME","-5:00","USMD","-5:00",
+				"USMA","-5:00","USMI","-5:00","USMN","-6:00","USMS","-6:00","USMO","-6:00","USMT","-7:00","USNE","-6:00",
+				"USNV","-8:00","USNH","-5:00","USNJ","-5:00","USNM","-7:00","USNY","-5:00","USNC","-5:00","USND","-6:00",
+				"USOH","-5:00","USOK","-6:00","USOR","-8:00","USPA","-5:00","USRI","-5:00","USSC","-5:00","USSD","-7:00",
+				"USTN","-6:00","USTX","-6:00","USUT","-7:00","USVT","-5:00","USVA","-5:00","USWA","-8:00","USWV","-5:00",
+				"USWI","-6:00","USWY","-7:00",
+				// C A N A D A
+				"CAAB","-7:00","CABC","-8:00","CAMB","-6:00","CANB","-4:00","CANL","-3:30","CANS","-4:00","CAON","-5:00",
+				"CAPE","-4:00","CAQC","-5:00","CASK","-6:00","CAYT","-8:00"};
 
 		// ISO3166-1 => DST offset
 		String i2cDST[] = {"AF","0","AL","1","DZ","0","AS","0","AD","1","AO","0","AI","0","AG","0","AR","0","AM","0","AW","0","AU","1",
@@ -295,7 +307,17 @@ public class Country_Code {
 				"VU","0","VA","1","VE","0","VN","0",
 				"WF","0",
 				"YE","0",
-				"ZM","0","ZW","0"};
+				"ZM","0","ZW","0",
+				// U S A
+				"USAL","1","USAK","1","USAZ","0","USAR","1","USCA","1","USCO","1","USCT","1","USDE","1","USDC","1","USFL","1",
+				"USGA","1","USHI","0","USID","1","USIL","1","USIN","1","USIA","1","USKS","1","USKY","1","USLA","1","USME","1",
+				"USMD","1","USMA","1","USMI","1","USMN","1","USMS","1","USMO","1","USMT","1","USNE","1","USNV","1","USNH","1",
+				"USNJ","1","USNM","1","USNY","1","USNC","1","USND","1","USOH","1","USOK","1","USOR","1","USPA","1","USRI","1",
+				"USSC","1","USSD","1","USTN","1","USTX","1","USUT","1","USVT","1","USVA","1","USWA","1","USWV","1","USWI","1",
+				"USWY","1",
+				// C A N A D A
+				"CAAB","1","CABC","1","CAMB","1","CANB","1","CANL","1","CANS","1","CAON","1","CAPE","1","CAQC","1","CASK","0",
+				"CAYT","1"};
 		
 		for  (int i=0; i<p2i.length; i++) { prefix2iso.put(Integer.parseInt(p2i[i]),p2i[++i]); }
 		
@@ -362,8 +384,9 @@ public class Country_Code {
      * Returns local time for country denoted by ISO MCC code argument
      */
     public String getLocalTime(String ISOmcc, String myISO) { // throws ParseException {
-    	String s = "";
     	Boolean err = false;
+    	
+    	if ( ISOmcc.equals(myISO) ) { return ""; }
     	
     	Time myUTC = new Time();
     	myUTC.setToNow();
@@ -371,7 +394,7 @@ public class Country_Code {
     	String[] tstr;
     	
     	Calendar c = Calendar.getInstance();	// my local time with local DST considered
-		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
     	if ( ISOmcc2STD.get(myISO) != null ) {
     		tstr = ISOmcc2STD.get(myISO).split(":");
@@ -380,16 +403,20 @@ public class Country_Code {
     		// c <= my local UTC time with local DST
     	} else { err = true; }
     	
+    	//Log.v("getLocalTime","after myUTC: " + myISO + ": " + sdf.format(c.getTime()));
+    	
     	if ( ISOmcc2STD.get(ISOmcc) != null ) {
     		tstr = ISOmcc2STD.get(ISOmcc).split(":");
        		c.add(Calendar.HOUR, Integer.parseInt(tstr[0]));
     		c.add(Calendar.MINUTE, Integer.parseInt(tstr[1]));    	
     		// c <= remote time in UTC (no DST considered yet for remote location
     	} else { err = true; }
-    	Log.v("getLocalTime","before DST: " + Boolean.toString(err));
+    	//Log.v("getLocalTime","after remoteUTC: " + sdf.format(c.getTime()));
 
-    	s = sdf.format(c.getTime());
-    	Log.v("getLocalTime","before DST: " + s);
+    	// Log.v("getLocalTime","before DST: " + Boolean.toString(err));
+
+    	String s = sdf.format(c.getTime());
+    	// Log.d("getLocalTime","before DST: " + s);
     	
     	if ( ! err ) {    		
     		if ( myUTC.isDst > 0 ) { // in DST

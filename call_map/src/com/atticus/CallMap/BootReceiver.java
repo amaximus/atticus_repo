@@ -11,11 +11,11 @@ public class BootReceiver extends BroadcastReceiver {
 
 	CallMap cmap = new CallMap();
 	
-	if ( cmap.getOptEnabled(context) ) {
+	/* if ( cmap.getOptEnabled(context) ) {
 		// start the service
 		Intent service = new Intent(context, CallMapService.class);
 	    context.startService(service);
-	}
+	} */
     
 	// if ( enabled ) {
     // } // if

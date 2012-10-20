@@ -34,6 +34,10 @@ public class CallMap extends Activity {
            GVariables.canada = false;
            appcontext = this;
            
+           TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 
+           assert(tm != null);
+           GVariables.ownCountryISO = tm.getSimCountryIso().toUpperCase();
+           
            // Log.v(getClass().getSimpleName(),"own ISOmcc: " + ownCountryISO);
            
            GVariables.appcontext = getApplicationContext();
@@ -99,6 +103,8 @@ public class CallMap extends Activity {
            final TextView tv8 = (TextView) findViewById(R.id.textView8);
            
 	       final CheckBox cb1 = (CheckBox) findViewById(R.id.checkBox1);
+  	       cb1.setChecked(GVariables.onlyInternational);
+
 	       cb1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
  			   @Override
 	    	   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -169,16 +175,43 @@ public class CallMap extends Activity {
 	    editor.putInt("toast_position", GVariables.toast_position);
 	    editor.putBoolean("only_international", GVariables.onlyInternational);
 	    editor.putString("own_ISO", GVariables.ownCountryISO);
-
+	    
+	    // Commit the edits!
+	    editor.commit();
+	    
+	    //Toast.makeText(GVariables.appcontext,GVariables.ownCountryISO,Toast.LENGTH_SHORT).show();
+	}
+	
+	/*
+	 * Save preferences on back button too
+	 */
+    @Override
+    public void onBackPressed() {
+    
+        super.onBackPressed();
+        
+		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+	    SharedPreferences.Editor editor = settings.edit();
+	    editor.putBoolean("app_enabled", GVariables.app_enabled);
+	    editor.putInt("toast_sec", GVariables.toast_sec);
+	    editor.putInt("toast_position", GVariables.toast_position);
+	    editor.putBoolean("only_international", GVariables.onlyInternational);
+	    editor.putString("own_ISO", GVariables.ownCountryISO);
 
 	    // Commit the edits!
 	    editor.commit();
-	}
+}
 	
     public Boolean getOptEnabled(Context context) {
     	SharedPreferences CallMapSettings = context.getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
         return CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
     	
     }
+    
+    /* public Context getAppContext() {
+    	return appcontext;
+    } */
+    
+    
 }
 

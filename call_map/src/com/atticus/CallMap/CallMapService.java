@@ -6,7 +6,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
+//import android.util.Log;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -15,6 +15,8 @@ public class CallMapService extends Service {
 	
 	TelephonyManager tm;
 	Country_Code cc;
+	String ownISO;
+	Integer tposition, tsec;
 	
 	@Override
 	public void onCreate() {
@@ -25,6 +27,14 @@ public class CallMapService extends Service {
         GVariables.ownCountryISO = tm.getSimCountryIso().toUpperCase();
         
         cc = new Country_Code();
+        
+        SharedPreferences CallMapSettings = getApplicationContext().getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+        GVariables.app_enabled = CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
+        
+    	GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
+        ownISO = CallMapSettings.getString("own_ISO", "");
+        tposition = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
+    	tsec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
 	}
 
 	@Override
@@ -50,15 +60,11 @@ public class CallMapService extends Service {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
         	
-        	String ownISO;
         	Integer cCountryCode = 0;	// call's country prefix
         	String  cCountry = null;	// call's country name
-        	Integer tposition, tsec;
-        	
-        	Application cmapp = getApplication();
-        	
-        	// Log.v("PhoneStateListener"," state: " + Integer.toString(state));
-        	
+        	        	
+        	// Log.v("PhoneStateListener","state: " + Integer.toString(state) + ":" + ownISO);
+
             switch (state) {
             
             case TelephonyManager.CALL_STATE_IDLE:
@@ -66,17 +72,19 @@ public class CallMapService extends Service {
             		break;
             case TelephonyManager.CALL_STATE_RINGING:
             	
-            	Context context = cmapp.getApplicationContext();
+                // Log.v("CallMapService","ownISO: " + ownISO);
+
+            	//Context context = getApplicationContext();
             	
-            	SharedPreferences CallMapSettings = context.getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
-                GVariables.app_enabled = CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
+            	/* SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+                GVariables.app_enabled = CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled); */
                 
             	if ( GVariables.app_enabled ) {
             		
-                	GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
+/*                	GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
                     ownISO = CallMapSettings.getString("own_ISO", "");
                     tposition = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
-                	tsec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
+                	tsec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec); */
                 	
             		cCountryCode = GVariables.country_prefix(incomingNumber);
             	            	
@@ -86,25 +94,27 @@ public class CallMapService extends Service {
             			cCountry = cc.getcountry(cCountryCode);
             		} else { cCountry = cc.getcountry(ownISO); }
                 
-                    // Log.v("Ringing","onlyInternational: " + Boolean.toString(GVariables.onlyInternational));
+                    //Log.d("Ringing","ownISO: " + ownISO);
 
             		if ( ! GVariables.onlyInternational || ( cCountry != cc.getcountry(ownISO))) {
             			if ( cCountry != null ) {
-            				// Log.v("PhoneStateListener"," < " + Integer.toString(cCountryCode));
+            				//Log.d("PhoneStateListener1"," < " + Integer.toString(cCountryCode));
 
             				String txtMsg = cCountry;
             				String countryISO = cc.getISOmcc(cCountryCode);
-            				// Log.v("PhoneStateListener"," < " + countryISO);
+            				//Log.d("PhoneStateListener2"," < " + countryISO);
 
             				if ( countryISO != null && countryISO.length() != 0) {
 
             					String ccLocalTime = cc.getLocalTime(countryISO, ownISO);
-                				Log.v("PhoneStateListener"," < " + ccLocalTime);
+                				//Log.d("PhoneStateListener3"," < " + ccLocalTime);
 
-            					if ( ccLocalTime != "" ) { txtMsg = txtMsg + "\n" + ccLocalTime; }
+            					if ( ! ccLocalTime.equals("") ) { txtMsg = txtMsg + "|" + ccLocalTime; }
             				}
 
-            				GVariables.DisplayToast(getApplicationContext(), countryISO, cCountry,tposition, tsec);
+            				//Log.d("PhoneStateListener4"," < " + txtMsg);
+
+            				GVariables.DisplayToast(getApplicationContext(), countryISO, txtMsg,tposition, tsec);
             			}
             		}   // if
             	}  // if enabled

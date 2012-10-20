@@ -3,7 +3,7 @@ package com.atticus.CallMap;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.util.Log;
+// import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,7 +115,9 @@ public class GVariables {
     	// if ( cCountry != "" ) { countryn = cCountry; }
     	    	
     	if ( countryn != null && countryn.length() != 0 ) {
-    			text.setText(countryn);
+    			// replace | by new line???
+    			String fcountryn = countryn.replace("|","\nlocal time: ");
+    			text.setText(fcountryn);
     	}
 
     	toast = new Toast(context);
