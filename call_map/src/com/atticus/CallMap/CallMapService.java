@@ -1,7 +1,6 @@
 package com.atticus.CallMap;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -63,28 +62,19 @@ public class CallMapService extends Service {
         	Integer cCountryCode = 0;	// call's country prefix
         	String  cCountry = null;	// call's country name
         	        	
-        	// Log.v("PhoneStateListener","state: " + Integer.toString(state) + ":" + ownISO);
+        	//Log.v("PhoneStateListener","state: " + Integer.toString(state) + ":" + ownISO);
 
             switch (state) {
-            
             case TelephonyManager.CALL_STATE_IDLE:
-            		if ( GVariables.toast != null ) { GVariables.toast.cancel(); GVariables.toast = null; }
+            		if ( GVariables.toast != null ) { 
+            			GVariables.toast.cancel(); GVariables.toast = null;
+            		}
             		break;
             case TelephonyManager.CALL_STATE_RINGING:
             	
                 // Log.v("CallMapService","ownISO: " + ownISO);
-
-            	//Context context = getApplicationContext();
-            	
-            	/* SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
-                GVariables.app_enabled = CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled); */
                 
             	if ( GVariables.app_enabled ) {
-            		
-/*                	GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
-                    ownISO = CallMapSettings.getString("own_ISO", "");
-                    tposition = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
-                	tsec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec); */
                 	
             		cCountryCode = GVariables.country_prefix(incomingNumber);
             	            	

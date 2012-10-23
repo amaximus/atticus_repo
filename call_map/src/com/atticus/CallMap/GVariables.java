@@ -102,11 +102,11 @@ public class GVariables {
     	View layout = inflater.inflate(R.layout.toast_layout, null);
     	
     	ImageView image = (ImageView) layout.findViewById(R.id.image);
-    	/* Integer resourceID = context.getResources().getIdentifier("drawable/imageHU.png", null,"com.atticus.call_map");
-    	
-    	if ( resourceID != 0 ) { image.setImageResource(resourceID); } */
-    	
-    	image.setImageResource(context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName()));
+
+    	if ( countryISO != null && ! countryISO.equals("") ) {	
+    		Integer resourceID = context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName());
+    		if ( resourceID != 0 ) { image.setImageResource(resourceID); }
+    	}
 
     	//Log.v("Ringing","DisplayToast: " + context.getPackageName());
     	//Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
