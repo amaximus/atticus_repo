@@ -1,28 +1,22 @@
 package com.atticus.CallMap;
 
 import android.os.Bundle;
-import android.telephony.PhoneStateListener;
+import android.os.Handler;
 import android.telephony.TelephonyManager;
-//import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class CallMap extends Activity {
-
-	private Integer WHITE = 0xFFFFFFFF;
-	private Integer GREY  = 0xFF736F6E;
 	
 	static private Context appcontext;
 		    
@@ -46,123 +40,142 @@ public class CallMap extends Activity {
            GVariables.toast_sec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
            GVariables.toast_position = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
            GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
-                      
-           final EditText et1 = (EditText) findViewById(R.id.edtimeout);
-           et1.setText(Integer.toString(GVariables.toast_sec));
-           et1.setFocusableInTouchMode(GVariables.app_enabled);
-		   et1.setFocusable(GVariables.app_enabled);
-   	       et1.setOnFocusChangeListener(new OnFocusChangeListener(){
-   	    	   @Override
-   	    	   public void onFocusChange(View v,boolean hasFocus){
-   	    		   	   String s = et1.getText().toString();
-   	    		   	   if ( s != null && s.length() != 0 ) { 
-   	    		   		   if ( s.length() < 4 ) { GVariables.toast_sec = Integer.parseInt(s); }
-   	    		   		   else { 
-   	    		   			   Toast.makeText(GVariables.appcontext,"Number too large; reset to previous value",Toast.LENGTH_SHORT).show();
-    	    		   		   et1.setText(Integer.toString(GVariables.toast_sec));
-   	    		   		   }
-   	    		   	   } else {
-   	    		   		   // GVariables.toast_sec = def_toast_sec;
-   	    		   		   Toast.makeText(GVariables.appcontext,"Empty field; reset to previous value",Toast.LENGTH_SHORT).show();
-   	    		   		   et1.setText(Integer.toString(GVariables.toast_sec));
-   	    		   	   }
-   	    		   	   //Log.v("CallMapSetting_position","|" + Integer.toString(GVariables.toast_sec) + "|");
-
-   	    	   }  // onFocusCange
-   	       });
-   	       
-           final EditText et2 = (EditText) findViewById(R.id.edposition);
-           et2.setText(Integer.toString(GVariables.toast_position));
-           et2.setFocusableInTouchMode(GVariables.app_enabled);
-		   et2.setFocusable(GVariables.app_enabled);
-   	       et2.setOnFocusChangeListener(new OnFocusChangeListener(){
-   	    	   @Override
-   	    	   public void onFocusChange(View v,boolean hasFocus){
-   	    		   	   String s = et2.getText().toString();
-   	    		   	   if ( s != null && s.length() != 0 ) { 
-   	    		   		   if ( s.length() < 4 ) { GVariables.toast_position = Integer.parseInt(s); }
-   	    		   		   else {
-   	    		   			   Toast.makeText(GVariables.appcontext,"Number too large; reset to previous value",Toast.LENGTH_SHORT).show();
-   	    		   			   et1.setText(Integer.toString(GVariables.toast_sec));
-   	    		   		   }
-   	    		   	   } else { 
-   	    		   		   //GVariables.toast_position = def_toast_position;
-   	    		   		   Toast.makeText(GVariables.appcontext,"Empty field reset to previous value",Toast.LENGTH_SHORT).show();
-   	    		   		   et2.setText(Integer.toString(GVariables.toast_position));
-   	    		   	   }
-   	    		   // Log.v("CallMapSetting_position",Integer.toString(GVariables.toast_position));
-
-   	    	   }  // onFocus
-   	       });
-  	       
-           final TextView tv3 = (TextView) findViewById(R.id.textView3);
-           final TextView tv4 = (TextView) findViewById(R.id.textView4);
-           final TextView tv5 = (TextView) findViewById(R.id.textView5);
-           final TextView tv6 = (TextView) findViewById(R.id.textView6);
-           final TextView tv7 = (TextView) findViewById(R.id.textView7);
-           final TextView tv8 = (TextView) findViewById(R.id.textView8);
+           GVariables.show_name = CallMapSettings.getBoolean("show_name", GVariables.def_show_name);
+           GVariables.show_nameN = CallMapSettings.getBoolean("show_nameN", GVariables.def_show_nameN);
+           GVariables.show_map = CallMapSettings.getBoolean("show_map", GVariables.def_show_map);
+           GVariables.show_time = CallMapSettings.getBoolean("show_time", GVariables.def_show_time);
            
-	       final CheckBox cb1 = (CheckBox) findViewById(R.id.checkBox1);
-  	       cb1.setChecked(GVariables.onlyInternational);
+   		   Log.d("CallMap","onCreate: " + Boolean.toString(GVariables.app_enabled));
 
-	       cb1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
- 			   @Override
-	    	   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-	    		   	  if (buttonView.isChecked()) { GVariables.onlyInternational = true; }
-	    		   	  else { GVariables.onlyInternational = false; }
-	   	    		  //Log.v("CheckBox",Boolean.toString(GVariables.onlyInternational));
+           
+           if ( GVariables.ownCountryISO.equals("US") || GVariables.ownCountryISO.equals("CA") ) {
+        	   // get my own number
+        	   String myPhoneNumber = tm.getLine1Number();
+        	   // NANP
+        	   Country_Code cc = new Country_Code();
+        	   GVariables.ownCountryISO =   cc.getISOmcc(1000 + Integer.parseInt(myPhoneNumber.substring(1,4)));
+        	   if ( GVariables.ownCountryISO == null ) { GVariables.ownCountryISO = ""; }
+        	   // cCountry = cc.getcountry(cCountryCode, GVariables.show_name, GVariables.show_nameN);
+           }
+	       // appcontext = getApplicationContext();
+  		   final Intent service = new Intent(appcontext, CallMapService.class);
 
-	    	   }
-	       });
-
-	       appcontext = getApplicationContext();
-	       final Intent service = new Intent(appcontext, CallMapService.class);
-
-  	       ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton1);
-  	       tb.setChecked(GVariables.app_enabled);
-   	       tb.setOnClickListener(new OnClickListener() {
-   	    	   @Override
+	       ToggleButton tb1 = (ToggleButton) findViewById(R.id.toggleButton1);
+  	       tb1.setChecked(GVariables.app_enabled);
+   	       tb1.setOnClickListener(new OnClickListener() {
+  	    	   @Override
    	    	   public void onClick(View v) {
+  	    		   final Intent service = new Intent(appcontext, CallMapService.class);
    	    		   if ( GVariables.app_enabled ) {
    	    			   GVariables.app_enabled = false;
-   	    			   
-   	    			   appcontext.stopService(service);
-
-   	    	           // tm.listen(null, PhoneStateListener.LISTEN_CALL_STATE);
-   	    			   
-   	    			   //Log.v(getClass().getSimpleName(),"OFF");
-   	    			   
-   	    			   tv3.setTextColor(GREY);
-   	    			   tv4.setTextColor(GREY);
-   	    			   tv5.setTextColor(GREY);
-   	    			   tv6.setTextColor(GREY);
-   	    			   tv7.setTextColor(GREY);
-   	    			   tv8.setTextColor(GREY);
-   	    		   } else {
+   	    			   GVariables.appcontext.stopService(service);
+   	    		   } else { 
    	    			   GVariables.app_enabled = true;
-   	    			   
-   	    			   appcontext.startService(service);
-
-   	    	           // tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-   	    	           
-   	    			   //Log.v(getClass().getSimpleName(),"ON");
-   	    	           
-   	    			   tv3.setTextColor(WHITE);
-   	    			   tv4.setTextColor(WHITE);
-   	    			   tv5.setTextColor(WHITE);
-   	    			   tv6.setTextColor(WHITE);
-   	    			   tv7.setTextColor(WHITE);
-   	    			   tv8.setTextColor(WHITE);
+   	    			   GVariables.appcontext.startService(service);
    	    		   }
-   	    		   et1.setFocusableInTouchMode(GVariables.app_enabled);
-   	    		   et1.setFocusable(GVariables.app_enabled);
-   	    		   et2.setFocusableInTouchMode(GVariables.app_enabled);
-   	    		   et2.setFocusable(GVariables.app_enabled);
-   	    		   cb1.setEnabled(GVariables.app_enabled);
-
+   	    		   
+   	    		   SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+   	    		   SharedPreferences.Editor editor = settings.edit();
+   	    		   editor.putBoolean("app_enabled", GVariables.app_enabled);
+   			    
+   	    		   // Commit the edits!
+   	    		   editor.commit();
+   	    		   
+   	    		   Log.d("CallMap",Boolean.toString(GVariables.app_enabled));
    	    	   }
-   	       });	       
+   	       });
+   	       
+   	       if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
+   	       
+   	       new Handler().postDelayed(new Runnable() { public void run() { openOptionsMenu(); } }, 2000);
+   	       
 	}  // onCreate
+	
+	@Override
+	public void onResume() {
+		
+		final Intent service = new Intent(appcontext, CallMapService.class);
+
+	    ToggleButton tb1 = (ToggleButton) findViewById(R.id.toggleButton1);
+  	    tb1.setChecked(GVariables.app_enabled);
+   	    tb1.setOnClickListener(new OnClickListener() {
+   	    	@Override
+   	    	public void onClick(View v) {
+   	    		final Intent service = new Intent(appcontext, CallMapService.class);
+   	    		if ( GVariables.app_enabled ) {
+   	    			GVariables.app_enabled = false;
+   	    			GVariables.appcontext.stopService(service);
+   	    		} else { 
+   	    			GVariables.app_enabled = true;
+   	    			GVariables.appcontext.startService(service);
+   	    		}
+   	    		   
+   	    		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+   	    		SharedPreferences.Editor editor = settings.edit();
+   	    		editor.putBoolean("app_enabled", GVariables.app_enabled);
+   			    
+   	    		// Commit the edits!
+   	    		editor.commit();
+   	    		   
+   	    		//Log.d("CallMap",Boolean.toString(GVariables.app_enabled));
+   	    	 }
+   	    });
+   	       
+   	    if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
+		Log.d("CallMap","onResume: " + Boolean.toString(GVariables.app_enabled));
+		
+		super.onResume();
+
+	}
+	
+	@Override
+	public void onRestart() {
+		
+		final Intent service = new Intent(appcontext, CallMapService.class);
+
+	    ToggleButton tb1 = (ToggleButton) findViewById(R.id.toggleButton1);
+  	    tb1.setChecked(GVariables.app_enabled);
+   	    tb1.setOnClickListener(new OnClickListener() {
+   	    	@Override
+   	    	public void onClick(View v) {
+   	    		final Intent service = new Intent(appcontext, CallMapService.class);
+   	    		if ( GVariables.app_enabled ) {
+   	    			GVariables.app_enabled = false;
+   	    			GVariables.appcontext.stopService(service);
+   	    		} else { 
+   	    			GVariables.app_enabled = true;
+   	    			GVariables.appcontext.startService(service);
+   	    		}
+   	    		   
+   	    		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+   	    		SharedPreferences.Editor editor = settings.edit();
+   	    		editor.putBoolean("app_enabled", GVariables.app_enabled);
+   			    
+   	    		// Commit the edits!
+   	    		editor.commit();
+   	    		   
+   	    		//Log.d("CallMap",Boolean.toString(GVariables.app_enabled));
+   	    	 }
+   	    });
+   	       
+   	    if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
+		Log.d("CallMap","onRestart: " + Boolean.toString(GVariables.app_enabled));
+		
+		super.onRestart();
+
+	}
+
+/*	@Override
+	public void onBackPressed() {
+	        super.onBackPressed();
+	        
+			SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+		    SharedPreferences.Editor editor = settings.edit();
+		    editor.putBoolean("app_enabled", GVariables.app_enabled);
+		    
+		    // Commit the edits!
+		    editor.commit();
+	}
 	
 	@Override
 	protected void onStop(){
@@ -171,36 +184,44 @@ public class CallMap extends Activity {
 		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
 	    SharedPreferences.Editor editor = settings.edit();
 	    editor.putBoolean("app_enabled", GVariables.app_enabled);
-	    editor.putInt("toast_sec", GVariables.toast_sec);
-	    editor.putInt("toast_position", GVariables.toast_position);
-	    editor.putBoolean("only_international", GVariables.onlyInternational);
-	    editor.putString("own_ISO", GVariables.ownCountryISO);
 	    
 	    // Commit the edits!
 	    editor.commit();
-	    
-	    //Toast.makeText(GVariables.appcontext,GVariables.ownCountryISO,Toast.LENGTH_SHORT).show();
-	}
+	} */
 	
-	/*
-	 * Save preferences on back button too
-	 */
+	// Initiating Menu XML file
     @Override
-    public void onBackPressed() {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.layout.menu, menu);
+        return true;
+    }
     
-        super.onBackPressed();
-        
-		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
-	    SharedPreferences.Editor editor = settings.edit();
-	    editor.putBoolean("app_enabled", GVariables.app_enabled);
-	    editor.putInt("toast_sec", GVariables.toast_sec);
-	    editor.putInt("toast_position", GVariables.toast_position);
-	    editor.putBoolean("only_international", GVariables.onlyInternational);
-	    editor.putString("own_ISO", GVariables.ownCountryISO);
-
-	    // Commit the edits!
-	    editor.commit();
-}
+    /**
+     * Event Handling for Individual menu item selected
+     * Identify single menu item by it's id
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        { 
+        case R.id.menu_preferences:
+        	if ( GVariables.app_enabled ) { startActivity(new Intent(this, Preferences.class)); }
+        	else { Toast.makeText(GVariables.appcontext,"Cannot set preferences while functionality is disabled.",
+        			Toast.LENGTH_LONG).show();
+        	}
+            return true;
+            
+        case R.id.menu_about:
+        	startActivity(new Intent(this, About.class));
+            return true;
+            
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
 	
     public Boolean getOptEnabled(Context context) {
     	SharedPreferences CallMapSettings = context.getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
@@ -208,9 +229,7 @@ public class CallMap extends Activity {
     	
     }
     
-    /* public Context getAppContext() {
-    	return appcontext;
-    } */
+    
     
     
 }

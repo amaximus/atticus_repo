@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_preferences"
+        android:icon="@drawable/preferences"
+        android:title="Settings"
+        
+        android:orderInCategory="100" />
+    
+     <item android:id="@+id/menu_about"
+        android:title="About"
+        android:icon="@drawable/about"
+        android:orderInCategory="101" />
+</menu>

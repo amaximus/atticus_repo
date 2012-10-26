@@ -7,7 +7,9 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,42 +20,54 @@ public class GVariables {
 	public static Toast toast;
 	
 	public static Boolean app_enabled;
+	public static Boolean show_name;
+	public static Boolean show_nameN;
+	public static Boolean show_map;
+	public static Boolean show_time;
+
 	public static Integer toast_sec;
 	public static Integer toast_position;
 	public static Context appcontext;
 	public static Boolean canada;
 	public static String  ownCountryISO;		// own country ISO mcc code
 	public static Boolean onlyInternational;
+	
+	// default values
 	public static Boolean def_app_enabled = false;
 	public static Boolean def_only_international = false;
 	public static Integer def_toast_position = 35;
 	public static Integer def_toast_sec = 8;
+	public static Boolean def_show_name = true;
+	public static Boolean def_show_nameN = true;
+	public static Boolean def_show_map = true;
+	public static Boolean def_show_time = true;
 	
 	public static Integer country_prefix(String s) {
 
 		Boolean international = false;
 		Integer prefix = 0;
 		String s1 = "";
-						
-		if ( s.substring(0,1).equals("+") ) {
+		
+		if ( s != null && s.length() != 0 ) {
+			if ( s.substring(0,1).equals("+") ) {
 				international = true;
 				// s.replaceFirst("^+", "");
 				s1 = s.substring(1);
 				s = s1;
-		}
-		if ( s.substring(0,2).equals("00") ) { 
-			international = true;
-			//s.replaceFirst("^00", "");
-			s1 = s.substring(2);
-			s = s1;
-		}
+			}
+			if ( s.substring(0,2).equals("00") ) { 
+				international = true;
+				//s.replaceFirst("^00", "");
+				s1 = s.substring(2);
+				s = s1;
+			}
 
-		if ( international ) {			
-			if (s.substring(0,1).equals("1") ) {	// North America Numbering Plan
-				prefix = 1000 + Integer.parseInt(s.substring(1,4));
-			} else if ( s.substring(0,1).equals("7") ) {	// Russia, Kazahstan
-				prefix=7;
-			} else {
+			if ( international ) {			
+				if (s.substring(0,1).equals("1") ) {	// North America Numbering Plan
+					prefix = 1000 + Integer.parseInt(s.substring(1,4));
+				} else if ( s.substring(0,1).equals("7") ) {	// Russia, Kazahstan
+					prefix=7;
+				} else {
 				switch ( Integer.parseInt(s.substring(0,2)) ) {
 				case 21:	// three-digit country codes
 				case 22:
@@ -84,9 +98,10 @@ public class GVariables {
 					prefix = Integer.parseInt(s.substring(0,2));
 					break;
 				}
+				}
 			}
 		}
-		
+
 		return prefix;
 	}
     
@@ -94,18 +109,20 @@ public class GVariables {
 	 * countryc = international call code
 	 * countryn = country name to display
 	 */
-    public static void DisplayToast(final Context context, String countryISO, String countryn, Integer tposition,final Integer tsec) {
+    public static void DisplayToast(final Context context, String countryISO, String countryn, Integer tposition,final Integer tsec, Boolean map) {
     	
     	Integer ToastDelay = 2500;	// delay for toast show
     	
     	LayoutInflater inflater = LayoutInflater.from(context);
     	View layout = inflater.inflate(R.layout.toast_layout, null);
     	
-    	ImageView image = (ImageView) layout.findViewById(R.id.image);
+    	if ( map ) {
+    		ImageView image = (ImageView) layout.findViewById(R.id.image);
 
-    	if ( countryISO != null && ! countryISO.equals("") ) {	
-    		Integer resourceID = context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName());
-    		if ( resourceID != 0 ) { image.setImageResource(resourceID); }
+    		if ( countryISO != null && ! countryISO.equals("") ) {	
+    			Integer resourceID = context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName());
+    			if ( resourceID != 0 ) { image.setImageResource(resourceID); }
+    		}
     	}
 
     	//Log.v("Ringing","DisplayToast: " + context.getPackageName());

@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import android.text.format.Time;
-// import android.util.Log;
+import android.util.Log;
 import android.util.SparseArray;
 
 public class Country_Code {
@@ -179,7 +179,7 @@ public class Country_Code {
 				"TW","Taiwan","TJ","Tajikistan","TZ","Tanzania","TH","Thailand","TG","Togo","TO","Tonga","TT","Trinidad and Tobago",
 				"TN","Tunisia","TR","Turkey","TM","Turkmenistan","TC","Turks and Caicos Islands",
 				"UG","Uganda","UA","Ukraine","AE","United Arab Emirates","GB","United Kingdom","US","United States of America",
-				"VI","United States Virgin Islands","UY","Uruguay","UZ","Uzbekistan",
+				"VI","United States Virgin Islands","UY","Uruguay","UZ","Uzbekistan","UK","United Kingdom",
 				"VU","Vanuatu","VA","Vatican City State","VE","Venezuela","VN","Viet Nam",
 				"WF","Wallis and Futuna",
 				"YE","Yemen",
@@ -258,7 +258,7 @@ public class Country_Code {
 				"SC","4:00","SL","0:00","SG","8:00","SK","1:00","SI","1:00","SB","11:00","SO","3:00","ZA","2:00","ES","1:00","LK","5:30",
 				"SD","3:00","SR","-3:00","SZ","2:00","SE","1:00","CH","1:00","SY","2:00",
 				"TW","8:00","TJ","5:00","TZ","3:00","TH","7:00","TG","0:00","TO","13:00","TT","-4:00","TN","1:00","TR","2:00","TM","5:00","TC","-5:00",
-				"UG","3:00","UA","2:00","AE","4:00","GB","0:00","US","","VI","-4:00","UY","-3:00","UZ","5:00",
+				"UG","3:00","UA","2:00","AE","4:00","GB","0:00","UK","0:00","US","","VI","-4:00","UY","-3:00","UZ","5:00",
 				"VU","11:00","VA","1:00","VE","-4:30","VN","7:00",
 				"WF","12:00",
 				"YE","3:00",
@@ -303,7 +303,7 @@ public class Country_Code {
 				"KN","0","LC","0","PM","1","VC","0","WS","1","SM","1","ST","0","SA","0","SN","0","RS","1","SC","0","SL","0","SG","0","SK","1",
 				"SI","1","SB","0","SO","0","ZA","0","ES","1","LK","0","SD","0","SR","0","SZ","0","SE","1","CH","1","SY","1",
 				"TW","0","TJ","0","TZ","0","TH","0","TG","0","TO","0","TT","0","TN","0","TR","1","TM","0","TC","1",
-				"UG","0","UA","1","AE","0","GB","1","VI","0","UY","1","UZ","0",
+				"UG","0","UA","1","AE","0","GB","1","UK","1","VI","0","UY","1","UZ","0",
 				"VU","0","VA","1","VE","0","VN","0",
 				"WF","0",
 				"YE","0",
@@ -349,12 +349,12 @@ public class Country_Code {
 	/*
 	 * Returns country name based on country calling prefix
 	 */
- 	public String getcountry(final Integer p) {
+ 	public String getcountry(final Integer p, Boolean name, Boolean nameN) {
  		String iso = "";
  		
 		if ( prefix2iso.get(p) != null ) { 
 			iso = prefix2iso.get(p);
-			if ( getcountry(iso) != null ) { return getcountry(iso); }
+			if ( getcountry(iso, name, nameN) != null ) { return getcountry(iso, name, nameN); }
 		}
 		return "";
 	}
@@ -362,22 +362,35 @@ public class Country_Code {
  	/*
  	 * Returns country name based on ISO mcc
  	 */
-	public String getcountry(final String iso) {
+	public String getcountry(final String iso, Boolean name, Boolean nameN) {
 		
 		String txt = "";
 		String txtN = "";
-		if ( ISOmcc2country.get(iso) != null ) {
-			txt = ISOmcc2country.get(iso);
-			if ( ISOmcc2countryN.get(iso) != null ) { 
-					txtN = ISOmcc2countryN.get(iso);
-					if ( txt != txtN ) { txt = txtN + "/" + txt; }
-			}
-			// NANP
-			if ( iso.substring(0,2).equals("US") || iso.substring(0,2).equals("CA") ) {
-				txt = txt + ", " + iso.substring(2,4);
+		String show = "";
+		
+		if ( ISOmcc2country.get(iso) != null ) { txt = ISOmcc2country.get(iso); }
+		
+		if ( ISOmcc2countryN.get(iso) != null ) { txtN = ISOmcc2countryN.get(iso); }
+		
+		// Log.d("getLocalTime",Boolean.toString(name) + ":" + txt + " && " + Boolean.toString(nameN) + ":" + txtN);
+		
+		if ( name ) { show = txt; }
+		
+		if ( nameN ) {
+			// Log.d("Country_Code", iso + txt + "||" + txtN);
+			if ( txtN.equals("") ) { show = txt; }
+			else { 
+				if ( ! txtN.equals(txt) ) { 
+					if ( name ) { show = txtN + "/" + show; }
+					else { show = txtN; }
+				}
 			}
 		}
-		return txt;
+		// NANP
+		if ( iso.substring(0,2).equals("US") || iso.substring(0,2).equals("CA") ) {
+				show = show + ", " + iso.substring(2,4);
+		}
+		return show;
 	}
 	
 	/*
@@ -386,6 +399,8 @@ public class Country_Code {
     public String getLocalTime(String ISOmcc, String myISO) { // throws ParseException {
     	Boolean err = false;
     	
+    	if ( ISOmcc.length() == 0 ) { return ""; }
+    	if ( myISO.length()  == 0 ) { return ""; }
     	if ( ISOmcc.equals(myISO) ) { return ""; }
     	
     	Time myUTC = new Time();
@@ -398,8 +413,8 @@ public class Country_Code {
 
     	if ( ISOmcc2STD.get(myISO) != null ) {
     		tstr = ISOmcc2STD.get(myISO).split(":");
-    		c.add(Calendar.HOUR, (-1) * Integer.parseInt(tstr[0]));
-    		c.add(Calendar.MINUTE, (-1) * Integer.parseInt(tstr[1]));    		
+    		if ( tstr[0] != null ) { c.add(Calendar.HOUR, (-1) * Integer.parseInt(tstr[0])); }
+    		if ( tstr[1] != null ) { c.add(Calendar.MINUTE, (-1) * Integer.parseInt(tstr[1])); }    		
     		// c <= my local UTC time with local DST
     	} else { err = true; }
     	
