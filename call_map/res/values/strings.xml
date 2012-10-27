@@ -5,24 +5,38 @@
     <string name="menu_settings">Call Map</string>
 	<string name="version">v1.2.1 AndroAtticus ©2012</string>
 	<string name="title_about">Call Map - About</string>
+	<string name="title_help">Call Map - Information</string>
+	
 	<string name="title_prefs">Call Map - Preferences</string>
 	
-	<string name="about">When enabled shows incoming call origin or outgoing call destination country, its associated 
+	<string name="about">When enabled, will show incoming call origin or outgoing call destination country, its associated 
 	    map and/or local time on remote side.\n
         \n
         Features:\n
         -------------\n
       	-- Configurable vertical position and time to show the country name and map.\n
-		-- Country name presented in country\'s official language as well (where applicable)\n
-		-- Configure whether to show the layer only for international calls.\n
-		-- Supports state names and maps for US and Canada.\n
+		-- Configurable to show the country name in country\'s official language as well (where applicable)\n
+		-- Configurable to show the layer only for international calls.\n
+		-- Supports state names and maps for US and Canada (NANP).\n
 		-- Supports local time on remote side.\n
 	</string>
+	<string name="help">When enabled, the following rules apply for showing country information:\n
+        \n
+      	-- When there is no associated native country name, the English name will be displayed instead.\n
+		-- Local time on remote side will only be displayed if the remote party is registered in a different country.\n
+		-- Daylight Saving Time (DST) is taken into consideration according to the local rules.\n
+		-- Interstate calls for US and Canada are considered \"international\".\n
+		\n
+		Known issues:\n
+		-------------------\n
+		-- Outgoing calls hung before layer timeout might still display the layer until its timeout expires.\n
+		\n
+	</string>
 	<string name="contact">Contact me at: <![CDATA[<a href="mailto:androatticus@gmail.com">androatticus@gmail.com</a>]]></string>
-	<string name="tnameEN">Name</string>
-	<string name="tnameNA">Native name</string>
-	<string name="tmap">Map</string>
-	<string name="ttime">Time</string>
+	<string name="tnameEN">Name\n</string>
+	<string name="tnameNA">Native\nname</string>
+	<string name="tmap">Map\n</string>
+	<string name="ttime">Time\n</string>
 	
 	
 	

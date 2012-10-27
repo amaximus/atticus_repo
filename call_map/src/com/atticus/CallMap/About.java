@@ -19,19 +19,5 @@ public class About extends Activity {
 
 	}  // onCreate
     
-/*	@Override
-	protected void onStop(){
-		super.onStop();
-	    
-	    //Toast.makeText(GVariables.appcontext,GVariables.ownCountryISO,Toast.LENGTH_SHORT).show();
-	}
-	
-    @Override
-    public void onBackPressed() {
-    
-        super.onBackPressed();
-        
-	} */
-    
 }
 

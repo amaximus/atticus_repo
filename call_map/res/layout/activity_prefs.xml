@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
+    android:gravity="fill_horizontal"
     android:orientation="vertical" >
 
     <TextView
@@ -62,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignTop="@+id/edposition"
-        android:text="Position"
+        android:text="Position:          "
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#FFFFFF" />
 
@@ -83,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView4"
         android:layout_centerVertical="true"
-        android:text="International only"
+        android:text="International only:"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#FFFFFF" />
 
@@ -110,24 +111,26 @@
         android:textColor="#FFFFFF" />
 
     <ToggleButton
-        android:id="@+id/tnameEN"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView7"
-        android:layout_below="@+id/textView7"
-        android:text="ToggleButton"
-        android:textOff="@string/tnameEN"
-        android:textOn="@string/tnameEN" />
-
-    <ToggleButton
         android:id="@+id/tnameNA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textView3"
         android:layout_below="@+id/textView7"
-        android:layout_toRightOf="@+id/tnameEN"
+        android:layout_marginRight="15dp"
         android:text="ToggleButton"
         android:textOff="@string/tnameNA"
         android:textOn="@string/tnameNA" />
+
+    <ToggleButton
+        android:id="@+id/tnameEN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tnameNA"
+        android:layout_alignBottom="@+id/tnameNA"
+        android:layout_alignLeft="@+id/textView7"
+        android:text="ToggleButton"
+        android:textOff="@string/tnameEN"
+        android:textOn="@string/tnameEN" />
 
     <ToggleButton
         android:id="@+id/ttime"
@@ -144,9 +147,8 @@
         android:id="@+id/tmap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/ttime"
-        android:layout_alignBottom="@+id/ttime"
-        android:layout_toLeftOf="@+id/ttime"
+        android:layout_below="@+id/textView7"
+        android:layout_toLeftOf="@+id/checkBox1"
         android:text="ToggleButton"
         android:textOff="@string/tmap"
         android:textOn="@string/tmap" />

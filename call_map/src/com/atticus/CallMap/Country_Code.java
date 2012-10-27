@@ -4,9 +4,18 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import android.content.Context;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.format.Time;
-import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+//import android.util.Log;
 
 public class Country_Code {
 	
@@ -17,9 +26,18 @@ public class Country_Code {
 	Map<String, String> ISOmcc2countryN = new HashMap<String, String>();
 	Map<String, String> ISOmcc2STD = new HashMap<String, String>();
 	Map<String, Integer> ISOmcc2DSToffset = new HashMap<String, Integer>();
+	
+	private String iso = "";
+	private String name = "";
+	private String nameN = ""; 
+	private String time = "";
+	private String ownISO = "";
+	private Boolean localCall = false;
+	
+	private Toast toast;
 
-	public Country_Code() {
-		
+	public Country_Code(Integer prefix, Integer myPrefix) {
+				
 		// country code prefix => ISO3166-1
 		String p2i[] = {"20","EG","211","SS","212","MA","213","DZ","216","TN","218","LY",
 				"220","GM","221","SN","222","MR","223","ML","224","GN","225","CI","226","BF","227","NE","228","TG","229","BJ",
@@ -138,7 +156,8 @@ public class Country_Code {
 				"1418","CAQC","1438","CAQC","1450","CAQC","1514","CAQC","1579","CAQC","1581","CAQC","1819","CAQC",
 				"1873","CAQC",	// Quebec
 				"1306","CASK","1639","CASK",	// Saskatchewan
-				"1867","CAYT"	// Yukon
+				"1867","CAYT",	// Yukon
+				"1555","USWY"	// emulator
 				};
 		
 		// ISO3166-1 => country
@@ -157,7 +176,7 @@ public class Country_Code {
 				"GA","Gabon","GM","Gambia","GE","Georgia","DE","Germany","GH","Ghana","GI","Gibraltar","GR","Greece","GL","Greenland",
 				"GD","Grenada","GP","Guadeloupe","GU","Guam","GT","Guatemala","GN","Guinea","GW","Guinea-Bissau","GY","Guyana",
 				"HT","Haiti","HN","Honduras","HK","Hong Kong","HU","Hungary",
-				"IS","Iceland","IN","India","IN","India","ID","Indonesia","IR","Iran","IQ","Iraq","IE","Ireland","IL","Israel","IT","Italy",
+				"IS","Iceland","IN","India","ID","Indonesia","IR","Iran","IQ","Iraq","IE","Ireland","IL","Israel","IT","Italy",
 				"JM","Jamaica","JP","Japan","JO","Jordan",
 				"KZ","Kazakhstan","KE","Kenya","KI","Kiribati","KP","North Korea","KR","South Korea","KW","Kuwait","KG","Kyrgyz Republic",
 				"LA","Laos","LV","Latvia","LB","Lebanon","LS","Lesotho","LR","Liberia","LY","Libya","LI","Liechtenstein","LT","Lithuania","LU","Luxembourg",
@@ -213,7 +232,7 @@ public class Country_Code {
 				"FI","Suomi","FJ","Viti","FO","Føroyar","FR","La France",
 				"GE","საქართველო","GF","Guyane française","GL","Grönland","GN","Guinée","GR","Ελλάδα","GU","Guåhån",
 				"HK","香港","HR","Hrvatska","HT","Ayiti","HU","Magyarország",
-				"IE","Erie","IL","מְדִינַת יִשְׂרָאֵל","IN","Bhārat Gaṇarājya","IQ","العراق","IR","ایران","IS","Island","IT","Italia",
+				"IE","Erie","IL","מְדִינַת יִשְׂרָאֵל","IN","Bhārat Ganarājya","IQ","العراق","IR","ایران","IS","Island","IT","Italia",
 				"JP","日本","JO","اَلأُرْدُنّ‎",
 				"KG","Кыргызстан","KM","جزر القمر","KP","조선민주주의인민공화국","KR","대한민국","KZ","Қазақстан","KW","دولة الكويت",
 				"LA","ສາທາລະນະລັດ ປະຊາທິປະໄຕ ປະຊາຊົນລາວ","LB","لبنان‎","LK","ශ්‍රී ලංකාව","LT","Lietuva","LV","Latvija","LY","‏ليبيا‎",
@@ -328,13 +347,52 @@ public class Country_Code {
 		for  (int i=0; i<i2cSTD.length; i++) { ISOmcc2STD.put(i2cSTD[i],i2cSTD[++i]); }
 
 		for  (int i=0; i<i2cDST.length; i++) { ISOmcc2DSToffset.put(i2cDST[i],Integer.parseInt(i2cDST[++i])); }
-
+		
+		if ( prefix2iso.get(prefix) != null ) { iso = prefix2iso.get(prefix); }
+		
+		if ( prefix2iso.get(myPrefix) != null ) { ownISO = prefix2iso.get(myPrefix); }
+		
+		time = "";
+		
+		if ( iso != null ) {
+			if ( ISOmcc2country.get(iso)  != null ) { name =  ISOmcc2country.get(iso);  }
+			if ( ISOmcc2countryN.get(iso) != null ) { nameN = ISOmcc2countryN.get(iso); }
+			
+			if ( ownISO != null && ownISO.length() != 0 ) {
+				if ( ! iso.equals(ownISO) ) { time = getLocalTime(); }
+				else { localCall = true; }
+			}
+		}
 	}
 	
-	public void put(Integer p, String c) {
-		prefix2iso.put(p,c);
+	public Boolean hasData() {
+		Boolean result = false;
+		if ( iso != null ) {
+			if ( ISOmcc2country.get(iso)  != null ) { result = true; }
+			else if ( ISOmcc2countryN.get(iso) != null ) { result = true; }
+		}
+		return result;
 	}
+	
+	public Boolean isLocalCall() {
+		return localCall;
+	}
+	
+	public void cancelToast() {
+		if ( toast != null ) { 
+			toast.cancel(); 
+			toast = null;
+		}
+	}
+	
+/*	private void put(Integer p, String c) {
+		prefix2iso.put(p,c);
+	} */
 
+	public String getISO() {
+		return iso;
+	}
+	
 	/*
 	 * Returns country ISO mcc based on calling prefix
 	 */
@@ -396,12 +454,12 @@ public class Country_Code {
 	/*
      * Returns local time for country denoted by ISO MCC code argument
      */
-    public String getLocalTime(String ISOmcc, String myISO) { // throws ParseException {
+    public String getLocalTime() { // throws ParseException {
     	Boolean err = false;
     	
-    	if ( ISOmcc.length() == 0 ) { return ""; }
-    	if ( myISO.length()  == 0 ) { return ""; }
-    	if ( ISOmcc.equals(myISO) ) { return ""; }
+    	if ( iso.length() == 0 ) { return ""; }
+    	if ( ownISO.length()  == 0 ) { return ""; }
+    	if ( iso.equals(ownISO) ) { return ""; }
     	
     	Time myUTC = new Time();
     	myUTC.setToNow();
@@ -411,22 +469,24 @@ public class Country_Code {
     	Calendar c = Calendar.getInstance();	// my local time with local DST considered
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
-    	if ( ISOmcc2STD.get(myISO) != null ) {
-    		tstr = ISOmcc2STD.get(myISO).split(":");
+    	// Log.d("getLocalTime","myLocal: " + sdf.format(c.getTime()));
+
+    	if ( ISOmcc2STD.get(ownISO) != null ) {
+    		tstr = ISOmcc2STD.get(ownISO).split(":");
     		if ( tstr[0] != null ) { c.add(Calendar.HOUR, (-1) * Integer.parseInt(tstr[0])); }
     		if ( tstr[1] != null ) { c.add(Calendar.MINUTE, (-1) * Integer.parseInt(tstr[1])); }    		
     		// c <= my local UTC time with local DST
     	} else { err = true; }
     	
-    	//Log.v("getLocalTime","after myUTC: " + myISO + ": " + sdf.format(c.getTime()));
+    	// Log.d("getLocalTime","myUTC: " + sdf.format(c.getTime()) + "diff: " + ISOmcc2STD.get(ownISO));
     	
-    	if ( ISOmcc2STD.get(ISOmcc) != null ) {
-    		tstr = ISOmcc2STD.get(ISOmcc).split(":");
+    	if ( ISOmcc2STD.get(iso) != null ) {
+    		tstr = ISOmcc2STD.get(iso).split(":");
        		c.add(Calendar.HOUR, Integer.parseInt(tstr[0]));
     		c.add(Calendar.MINUTE, Integer.parseInt(tstr[1]));    	
     		// c <= remote time in UTC (no DST considered yet for remote location
     	} else { err = true; }
-    	//Log.v("getLocalTime","after remoteUTC: " + sdf.format(c.getTime()));
+    	//Log.d("getLocalTime","remoteUTC: " + sdf.format(c.getTime()));
 
     	// Log.v("getLocalTime","before DST: " + Boolean.toString(err));
 
@@ -435,12 +495,82 @@ public class Country_Code {
     	
     	if ( ! err ) {    		
     		if ( myUTC.isDst > 0 ) { // in DST
-       			if ( ISOmcc2DSToffset.get(myISO) != null ) { c.add(Calendar.HOUR, (-1) * ISOmcc2DSToffset.get(myISO)); }
+       			if ( ISOmcc2DSToffset.get(ownISO) != null ) { c.add(Calendar.HOUR, (-1) * ISOmcc2DSToffset.get(ownISO)); }
     			
-    			if ( ISOmcc2DSToffset.get(ISOmcc) != null ) { c.add(Calendar.HOUR, ISOmcc2DSToffset.get(ISOmcc)); }
+    			if ( ISOmcc2DSToffset.get(iso) != null ) { c.add(Calendar.HOUR, ISOmcc2DSToffset.get(iso)); }
     		}
             s = sdf.format(c.getTime());
     	}    	
     	return s; 
     }
+    
+    /*
+ 	 * Display the toast
+ 	 */
+     public void DisplayToast(final Context context, Integer tposition,final Integer tsec, Boolean sname, Boolean snameN, Boolean smap, Boolean stime) {
+     	
+     	Integer ToastDelay = 2500;	// delay for toast show
+     	String show = "";
+     	Integer resourceID = 0;
+     	
+     	LayoutInflater inflater = LayoutInflater.from(context);
+     	View layout = inflater.inflate(R.layout.toast_layout, null);
+     	
+     	if ( smap ) {
+     		ImageView image = (ImageView) layout.findViewById(R.id.image);
+
+     		if ( iso != null && ! iso.equals("") ) {	
+     			resourceID = context.getResources().getIdentifier("image" + iso.toLowerCase(), "drawable",context.getPackageName());
+     			if ( resourceID != 0 ) { image.setImageResource(resourceID); }
+     		}
+     	}
+
+     	//Log.v("Ringing","DisplayToast: " + context.getPackageName());
+     	//Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
+     	
+     	if ( sname || snameN || stime ) {     	   	
+     		if ( sname ) { show = name; }
+     		if ( snameN ) {
+     			if ( show.equals("") ) { show = nameN; }
+     			else { 
+     					if ( ! nameN.equals("")) { show = nameN + "/" + show; }
+     			}
+     			if ( show.equals("") || show.equals("/") ) { show = name; }
+     		}	// sname
+     		// US or Canada
+     		
+         	// Log.d("DisplayToast", time + "|" + iso + "|" + ownISO);
+
+     		if ( stime ) { 
+     			if ( show.equals("") ) { show = time; }
+     			else { 
+     				if ( ! time.equals("") ) { show = show + "\nlocal time: " + time; }
+     			}
+     		}
+     		if ( ! show.equals("") ) {
+     			TextView text = (TextView) layout.findViewById(R.id.text);
+     			text.setText(show);
+     		}
+     	}
+     	
+     	if ( ! show.equals("") || resourceID != 0 ) {
+     		toast = new Toast(context);
+     		toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, tposition);
+     		toast.setView(layout);
+     		// GVariables.toast = toast;
+     	    	
+     		final Handler handler = new Handler();	// wait 2000ms
+     		handler.postDelayed(new Runnable() {    		
+     			@Override
+     			public void run() {
+     				new CountDownTimer(tsec*1000, 1000) {
+     					public void onTick(long millisUntilFinished) { 
+     						// Toast.makeText(context, Boolean.toString(callState),Toast.LENGTH_SHORT).show();
+     						if ( toast != null ) { toast.show(); } }
+     					public void onFinish() { /* toast.show(); */  }
+     				}.start();
+     			}   // run
+     		}, ToastDelay);  // Handler
+     	}	// if
+     }	// DisplayToast
 }

@@ -1,23 +1,9 @@
 package com.atticus.CallMap;
 
 import android.content.Context;
-import android.os.CountDownTimer;
-import android.os.Handler;
-// import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 //Global variables
 public class GVariables {
-	
-	public static Country_Code cc;
-	public static Toast toast;
 	
 	public static Boolean app_enabled;
 	public static Boolean show_name;
@@ -28,8 +14,8 @@ public class GVariables {
 	public static Integer toast_sec;
 	public static Integer toast_position;
 	public static Context appcontext;
-	public static Boolean canada;
-	public static String  ownCountryISO;		// own country ISO mcc code
+	// public static Boolean canada;
+	// public static String  ownCountryISO;		// own country ISO mcc code
 	public static Boolean onlyInternational;
 	
 	// default values
@@ -41,11 +27,11 @@ public class GVariables {
 	public static Boolean def_show_nameN = true;
 	public static Boolean def_show_map = true;
 	public static Boolean def_show_time = true;
-	
+		
 	public static Integer country_prefix(String s) {
 
 		Boolean international = false;
-		Integer prefix = 0;
+		Integer prefix = -1;
 		String s1 = "";
 		
 		if ( s != null && s.length() != 0 ) {
@@ -97,61 +83,12 @@ public class GVariables {
 				default:	// two-digit country codes
 					prefix = Integer.parseInt(s.substring(0,2));
 					break;
-				}
-				}
-			}
+				}	// switch
+				}	// if
+			} else { prefix = 0; }	// if international
 		}
 
 		return prefix;
 	}
     
-    /*
-	 * countryc = international call code
-	 * countryn = country name to display
-	 */
-    public static void DisplayToast(final Context context, String countryISO, String countryn, Integer tposition,final Integer tsec, Boolean map) {
-    	
-    	Integer ToastDelay = 2500;	// delay for toast show
-    	
-    	LayoutInflater inflater = LayoutInflater.from(context);
-    	View layout = inflater.inflate(R.layout.toast_layout, null);
-    	
-    	if ( map ) {
-    		ImageView image = (ImageView) layout.findViewById(R.id.image);
-
-    		if ( countryISO != null && ! countryISO.equals("") ) {	
-    			Integer resourceID = context.getResources().getIdentifier("image" + countryISO.toLowerCase(), "drawable",context.getPackageName());
-    			if ( resourceID != 0 ) { image.setImageResource(resourceID); }
-    		}
-    	}
-
-    	//Log.v("Ringing","DisplayToast: " + context.getPackageName());
-    	//Log.v("Ringing","DisplayToast: " + Integer.toString(resourceID));
-    	
-    	TextView text = (TextView) layout.findViewById(R.id.text);
-    	// if ( cCountry != "" ) { countryn = cCountry; }
-    	    	
-    	if ( countryn != null && countryn.length() != 0 ) {
-    			// replace | by new line???
-    			String fcountryn = countryn.replace("|","\nlocal time: ");
-    			text.setText(fcountryn);
-    	}
-
-    	toast = new Toast(context);
-    	toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, tposition);
-    	toast.setView(layout);
-    	    	
-    	final Handler handler = new Handler();	// wait 2000ms
-    	handler.postDelayed(new Runnable() {    		
-    	  @Override
-    	  public void run() {
-    		 new CountDownTimer(tsec*1000, 1000) {
-          	    	public void onTick(long millisUntilFinished) { 
-          	    		// Toast.makeText(context, Boolean.toString(callState),Toast.LENGTH_SHORT).show();
-          	    		if ( toast != null ) { toast.show(); } }
-          	    	public void onFinish() { /* toast.show(); */  }
-          	 }.start();
-    	  }   // run
-    	}, ToastDelay);  // Handler
-    }
 }

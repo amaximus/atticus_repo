@@ -14,28 +14,39 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
+//import android.util.Log;
 
 public class CallMap extends Activity {
 	
 	static private Context appcontext;
+	private Integer myPrefix;
 		    
 	@Override 
     public void onCreate(Bundle savedInstanceState) {
 		   super.onCreate(savedInstanceState);
 	       setContentView(R.layout.activity_main);
 	       
-           GVariables.canada = false;
+           // GVariables.canada = false;
            appcontext = this;
            
            TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 
            assert(tm != null);
-           GVariables.ownCountryISO = tm.getSimCountryIso().toUpperCase();
-           
-           // Log.v(getClass().getSimpleName(),"own ISOmcc: " + ownCountryISO);
-           
+           String myPhoneNumber = tm.getLine1Number();
+     	   if ( myPhoneNumber != null && myPhoneNumber.length() != 0 ) {
+    		   myPrefix = GVariables.country_prefix(myPhoneNumber);
+               //Log.d(getClass().getSimpleName(),"myNumber: " + myPhoneNumber + " (" + Integer.toString(myPrefix) + ")");
+     	   } 
+           //GVariables.ownCountryISO = tm.getSimCountryIso().toUpperCase();
+     	   
            GVariables.appcontext = getApplicationContext();
            SharedPreferences CallMapSettings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+           
+     	   if ( myPrefix != 0 ) {
+     		    SharedPreferences.Editor editor = CallMapSettings.edit();
+     		    editor.putInt("my_prefix", myPrefix);
+     		    editor.commit();
+     	   }
+
            GVariables.app_enabled = CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
            GVariables.toast_sec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
            GVariables.toast_position = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
@@ -45,18 +56,20 @@ public class CallMap extends Activity {
            GVariables.show_map = CallMapSettings.getBoolean("show_map", GVariables.def_show_map);
            GVariables.show_time = CallMapSettings.getBoolean("show_time", GVariables.def_show_time);
            
-   		   Log.d("CallMap","onCreate: " + Boolean.toString(GVariables.app_enabled));
-
+   		   // Log.d("CallMap","onCreate: " + Boolean.toString(GVariables.app_enabled));
            
-           if ( GVariables.ownCountryISO.equals("US") || GVariables.ownCountryISO.equals("CA") ) {
+           /* if ( GVariables.ownCountryISO.equals("US") || GVariables.ownCountryISO.equals("CA") ) {
         	   // get my own number
         	   String myPhoneNumber = tm.getLine1Number();
+        	   if ( myPhoneNumber != null && myPhoneNumber.length() != 0 ) {
+        		   Integer myPrefix = GVariables.country_prefix(myPhoneNumber);
+        	   } */
         	   // NANP
-        	   Country_Code cc = new Country_Code();
+        	   /*Country_Code cc = new Country_Code();
         	   GVariables.ownCountryISO =   cc.getISOmcc(1000 + Integer.parseInt(myPhoneNumber.substring(1,4)));
-        	   if ( GVariables.ownCountryISO == null ) { GVariables.ownCountryISO = ""; }
+        	   if ( GVariables.ownCountryISO == null ) { GVariables.ownCountryISO = ""; } */
         	   // cCountry = cc.getcountry(cCountryCode, GVariables.show_name, GVariables.show_nameN);
-           }
+           //}
 	       // appcontext = getApplicationContext();
   		   final Intent service = new Intent(appcontext, CallMapService.class);
 
@@ -77,11 +90,12 @@ public class CallMap extends Activity {
    	    		   SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
    	    		   SharedPreferences.Editor editor = settings.edit();
    	    		   editor.putBoolean("app_enabled", GVariables.app_enabled);
+   	    		   editor.putInt("my_prefix", myPrefix);
    			    
    	    		   // Commit the edits!
    	    		   editor.commit();
    	    		   
-   	    		   Log.d("CallMap",Boolean.toString(GVariables.app_enabled));
+   	    		   // Log.d("CallMap",Boolean.toString(GVariables.app_enabled));
    	    	   }
    	       });
    	       
@@ -113,7 +127,8 @@ public class CallMap extends Activity {
    	    		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
    	    		SharedPreferences.Editor editor = settings.edit();
    	    		editor.putBoolean("app_enabled", GVariables.app_enabled);
-   			    
+   	    		editor.putInt("my_prefix", myPrefix);
+
    	    		// Commit the edits!
    	    		editor.commit();
    	    		   
@@ -122,7 +137,7 @@ public class CallMap extends Activity {
    	    });
    	       
    	    if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
-		Log.d("CallMap","onResume: " + Boolean.toString(GVariables.app_enabled));
+		//Log.d("CallMap","onResume: " + Boolean.toString(GVariables.app_enabled));
 		
 		super.onResume();
 
@@ -150,6 +165,7 @@ public class CallMap extends Activity {
    	    		SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
    	    		SharedPreferences.Editor editor = settings.edit();
    	    		editor.putBoolean("app_enabled", GVariables.app_enabled);
+   	    		editor.putInt("my_prefix", myPrefix);
    			    
    	    		// Commit the edits!
    	    		editor.commit();
@@ -159,7 +175,7 @@ public class CallMap extends Activity {
    	    });
    	       
    	    if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
-		Log.d("CallMap","onRestart: " + Boolean.toString(GVariables.app_enabled));
+		//Log.d("CallMap","onRestart: " + Boolean.toString(GVariables.app_enabled));
 		
 		super.onRestart();
 
@@ -214,6 +230,10 @@ public class CallMap extends Activity {
         	}
             return true;
             
+        case R.id.menu_help:
+        	startActivity(new Intent(this, Help.class));
+            return true;
+            
         case R.id.menu_about:
         	startActivity(new Intent(this, About.class));
             return true;
@@ -228,9 +248,6 @@ public class CallMap extends Activity {
         return CallMapSettings.getBoolean("app_enabled", GVariables.def_app_enabled);
     	
     }
-    
-    
-    
     
 }
 

@@ -1,15 +1,12 @@
 package com.atticus.CallMap;
 
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -133,7 +130,7 @@ public class Preferences extends Activity {
 	    editor.putInt("toast_sec", GVariables.toast_sec);
 	    editor.putInt("toast_position", GVariables.toast_position);
 	    editor.putBoolean("only_international", GVariables.onlyInternational);
-	    editor.putString("own_ISO", GVariables.ownCountryISO);
+	    //editor.putString("own_ISO", GVariables.ownCountryISO);
 	    editor.putBoolean("show_name", GVariables.show_name);
 	    editor.putBoolean("show_nameN", GVariables.show_nameN);
 	    editor.putBoolean("show_map", GVariables.show_map);
@@ -160,7 +157,7 @@ public class Preferences extends Activity {
 	    editor.putInt("toast_sec", GVariables.toast_sec);
 	    editor.putInt("toast_position", GVariables.toast_position);
 	    editor.putBoolean("only_international", GVariables.onlyInternational);
-	    editor.putString("own_ISO", GVariables.ownCountryISO);
+	    // editor.putString("own_ISO", GVariables.ownCountryISO);
 	    editor.putBoolean("show_name", GVariables.show_name);
 	    editor.putBoolean("show_nameN", GVariables.show_nameN);
 	    editor.putBoolean("show_map", GVariables.show_map);

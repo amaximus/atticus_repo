@@ -27,7 +27,11 @@
                   android:label="@string/title_about"
                   android:launchMode="singleInstance">
         </activity>
-               <activity android:name=".Preferences"
+        <activity android:name=".Help"
+                  android:label="@string/title_help"
+                  android:launchMode="singleInstance">
+        </activity>
+        <activity android:name=".Preferences"
                   android:label="@string/title_prefs"
                   android:launchMode="singleInstance">
         </activity>
