@@ -24,6 +24,10 @@ public class MyPhoneReceiver extends BroadcastReceiver {
 	tposition = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
 	tsec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
 	myPrefix = CallMapSettings.getInt("my_prefix", 0);
+	GVariables.show_name = CallMapSettings.getBoolean("show_name", GVariables.def_show_name);
+    GVariables.show_nameN = CallMapSettings.getBoolean("show_nameN", GVariables.def_show_nameN);
+    GVariables.show_map = CallMapSettings.getBoolean("show_map", GVariables.def_show_map);
+    GVariables.show_time = CallMapSettings.getBoolean("show_time", GVariables.def_show_time);
 
 	/* TelephonyManager tm;
 	tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 

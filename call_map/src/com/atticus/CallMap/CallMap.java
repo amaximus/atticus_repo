@@ -3,6 +3,7 @@ package com.atticus.CallMap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,7 +20,7 @@ import android.content.SharedPreferences;
 public class CallMap extends Activity {
 	
 	static private Context appcontext;
-	private Integer myPrefix;
+	private Integer myPrefix = 0;
 		    
 	@Override 
     public void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class CallMap extends Activity {
    	       
    	       if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
    	       
-   	       new Handler().postDelayed(new Runnable() { public void run() { openOptionsMenu(); } }, 2000);
+   	       //new Handler().postDelayed(new Runnable() { public void run() { openOptionsMenu(); } }, 3000);
    	       
 	}  // onCreate
 	
@@ -138,7 +139,9 @@ public class CallMap extends Activity {
    	       
    	    if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
 		//Log.d("CallMap","onResume: " + Boolean.toString(GVariables.app_enabled));
-		
+   	    
+	    new Handler().postDelayed(new Runnable() { public void run() { openOptionsMenu(); } }, 2000);
+	    
 		super.onResume();
 
 	}

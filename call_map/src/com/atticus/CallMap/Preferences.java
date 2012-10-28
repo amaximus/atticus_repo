@@ -21,7 +21,16 @@ public class Preferences extends Activity {
 		   super.onCreate(savedInstanceState);
 	       setContentView(R.layout.activity_prefs);
 	       
-	       final EditText et1 = (EditText) findViewById(R.id.edtimeout);
+	       SharedPreferences CallMapSettings = getApplicationContext().getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
+		   GVariables.toast_sec = CallMapSettings.getInt("toast_sec", GVariables.def_toast_sec);
+		   GVariables.toast_position = CallMapSettings.getInt("toast_position", GVariables.def_toast_position);
+		   GVariables.onlyInternational = CallMapSettings.getBoolean("only_international", GVariables.def_only_international);
+		   GVariables.show_name = CallMapSettings.getBoolean("show_name", GVariables.def_show_name);
+           GVariables.show_nameN = CallMapSettings.getBoolean("show_nameN", GVariables.def_show_nameN);
+           GVariables.show_map = CallMapSettings.getBoolean("show_map", GVariables.def_show_map);
+           GVariables.show_time = CallMapSettings.getBoolean("show_time", GVariables.def_show_time);
+
+		   final EditText et1 = (EditText) findViewById(R.id.edtimeout);
            et1.setText(Integer.toString(GVariables.toast_sec));
    	       et1.setOnFocusChangeListener(new OnFocusChangeListener(){
    	    	   @Override

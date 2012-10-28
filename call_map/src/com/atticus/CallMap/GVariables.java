@@ -41,7 +41,7 @@ public class GVariables {
 				s1 = s.substring(1);
 				s = s1;
 			}
-			if ( s.substring(0,2).equals("00") ) { 
+			if ( s.length() >1 && s.substring(0,2).equals("00") ) { 
 				international = true;
 				//s.replaceFirst("^00", "");
 				s1 = s.substring(2);
