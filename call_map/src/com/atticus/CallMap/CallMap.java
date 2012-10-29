@@ -3,7 +3,6 @@ package com.atticus.CallMap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,13 +20,15 @@ public class CallMap extends Activity {
 	
 	static private Context appcontext;
 	private Integer myPrefix = 0;
+	Boolean prefsOnCreate = false;
+	Boolean prefsShown = false;
 		    
 	@Override 
     public void onCreate(Bundle savedInstanceState) {
 		   super.onCreate(savedInstanceState);
 	       setContentView(R.layout.activity_main);
 	       
-           // GVariables.canada = false;
+	       prefsOnCreate = true;
            appcontext = this;
            
            TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 
@@ -58,19 +59,6 @@ public class CallMap extends Activity {
            GVariables.show_time = CallMapSettings.getBoolean("show_time", GVariables.def_show_time);
            
    		   // Log.d("CallMap","onCreate: " + Boolean.toString(GVariables.app_enabled));
-           
-           /* if ( GVariables.ownCountryISO.equals("US") || GVariables.ownCountryISO.equals("CA") ) {
-        	   // get my own number
-        	   String myPhoneNumber = tm.getLine1Number();
-        	   if ( myPhoneNumber != null && myPhoneNumber.length() != 0 ) {
-        		   Integer myPrefix = GVariables.country_prefix(myPhoneNumber);
-        	   } */
-        	   // NANP
-        	   /*Country_Code cc = new Country_Code();
-        	   GVariables.ownCountryISO =   cc.getISOmcc(1000 + Integer.parseInt(myPhoneNumber.substring(1,4)));
-        	   if ( GVariables.ownCountryISO == null ) { GVariables.ownCountryISO = ""; } */
-        	   // cCountry = cc.getcountry(cCountryCode, GVariables.show_name, GVariables.show_nameN);
-           //}
 	       // appcontext = getApplicationContext();
   		   final Intent service = new Intent(appcontext, CallMapService.class);
 
@@ -140,8 +128,16 @@ public class CallMap extends Activity {
    	    if ( GVariables.app_enabled ) { GVariables.appcontext.startService(service); }
 		//Log.d("CallMap","onResume: " + Boolean.toString(GVariables.app_enabled));
    	    
-	    new Handler().postDelayed(new Runnable() { public void run() { openOptionsMenu(); } }, 2000);
-	    
+   	    new Handler().postDelayed(new Runnable() { 
+   	    	public void run() { 
+   	    		if ( prefsOnCreate ) {
+   	    			openOptionsMenu();
+   	   	   			prefsShown = true;
+   	    			prefsOnCreate = false;
+   	   			}
+   	   		} 
+   	   	}, 2000);
+
 		super.onResume();
 
 	}
@@ -184,19 +180,16 @@ public class CallMap extends Activity {
 
 	}
 
-/*	@Override
+	@Override
 	public void onBackPressed() {
 	        super.onBackPressed();
 	        
-			SharedPreferences settings = getSharedPreferences("CallMapSetting",Activity.MODE_PRIVATE);
-		    SharedPreferences.Editor editor = settings.edit();
-		    editor.putBoolean("app_enabled", GVariables.app_enabled);
-		    
-		    // Commit the edits!
-		    editor.commit();
+	   		//Log.d("CallMap","back: " + Boolean.toString(prefsOnCreate) + "|" + Boolean.toString(prefsShown) );
+	        
+			if ( prefsOnCreate && ! prefsShown ) { prefsOnCreate = false; }
 	}
 	
-	@Override
+	/* @Override
 	protected void onStop(){
 		super.onStop();
 		
