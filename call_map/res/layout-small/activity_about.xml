@@ -5,13 +5,32 @@
     android:layout_height="match_parent"
     android:background="#000000" >
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView1"
+        android:layout_centerHorizontal="true"
+        android:text="Call Map"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#A4C639" />
+
     <TextView
         android:id="@+id/copyright"
         android:layout_width="150dp"
         android:layout_height="35dp"
-        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignLeft="@+id/textView2"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/textView3"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_marginBottom="27dp"
         android:gravity="center"
         android:text="@string/version"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -23,25 +42,17 @@
         android:layout_height="2px"
         android:layout_above="@+id/copyright"
         android:layout_alignParentLeft="true"
+        android:layout_marginBottom="14dp"
         android:background="#A4C639" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/about"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/View01"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignRight="@+id/textView2"
-        android:layout_below="@+id/textView2"
+        android:layout_marginBottom="20dp"
         android:text="@string/contact"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#FFFFFF" />
