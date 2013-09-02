@@ -283,21 +283,21 @@ public final class R {
         public static final int preferences=0x7f02010d;
     }
     public static final class id {
-        public static final int View01=0x7f060005;
+        public static final int View01=0x7f060002;
         public static final int checkBox1=0x7f06000b;
-        public static final int copyright=0x7f060004;
+        public static final int copyright=0x7f060000;
         public static final int edposition=0x7f06000a;
         public static final int edtimeout=0x7f060009;
         public static final int image=0x7f060018;
-        public static final int imageView1=0x7f060002;
+        public static final int imageView1=0x7f060004;
         public static final int menu_about=0x7f060016;
         public static final int menu_help=0x7f060015;
         public static final int menu_preferences=0x7f060014;
         public static final int service_name=0x7f06001a;
         public static final int text=0x7f060019;
-        public static final int textView1=0x7f060003;
-        public static final int textView2=0x7f060001;
-        public static final int textView3=0x7f060006;
+        public static final int textView1=0x7f060005;
+        public static final int textView2=0x7f060003;
+        public static final int textView3=0x7f060001;
         public static final int textView4=0x7f06000c;
         public static final int textView5=0x7f06000d;
         public static final int textView6=0x7f06000e;
@@ -308,7 +308,7 @@ public final class R {
         public static final int toast_layout_root=0x7f060017;
         public static final int toggleButton1=0x7f060007;
         public static final int ttime=0x7f060012;
-        public static final int view1=0x7f060000;
+        public static final int view1=0x7f060006;
         public static final int view2=0x7f060008;
     }
     public static final class layout {

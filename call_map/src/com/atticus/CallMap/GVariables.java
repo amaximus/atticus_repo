@@ -54,7 +54,18 @@ public class GVariables {
 				} else if ( s.substring(0,1).equals("7") ) {	// Russia, Kazahstan
 					prefix=7;
 				} else {
-				switch ( Integer.parseInt(s.substring(0,2)) ) {
+					
+					Integer dig12;
+					try {
+					     dig12 = Integer.valueOf(s.substring(0,2));
+					 } catch( NumberFormatException  e){
+						 dig12=0;
+					 }
+					
+				switch ( dig12 ) {
+				case 0: 
+						prefix = -1;
+						break;
 				case 21:	// three-digit country codes
 				case 22:
 				case 23:
@@ -78,10 +89,14 @@ public class GVariables {
 				case 96:
 				case 97:
 				case 99:
-					prefix = Integer.parseInt(s.substring(0,3));
+					try {
+						prefix = Integer.parseInt(s.substring(0,3));
+					} catch( NumberFormatException  e){
+						prefix = -1;
+					}
 					break;
 				default:	// two-digit country codes
-					prefix = Integer.parseInt(s.substring(0,2));
+					prefix = dig12;
 					break;
 				}	// switch
 				}	// if

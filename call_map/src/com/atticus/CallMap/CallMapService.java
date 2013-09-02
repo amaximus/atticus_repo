@@ -41,8 +41,9 @@ public class CallMapService extends Service {
 		
 			svcState = false;
 			//Log.d("PhoneStateListener2","state: " + Boolean.toString(svcState));
-
-           tm.listen(null, PhoneStateListener.LISTEN_CALL_STATE);
+			
+			if ( tm != null ) { tm.listen(null, PhoneStateListener.LISTEN_CALL_STATE); }
+			
 	}
 	
 	@Override
